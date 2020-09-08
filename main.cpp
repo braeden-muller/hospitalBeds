@@ -28,8 +28,10 @@ int main(int argc, char *argv[])
             w = new HospitalWindow();
         else if (arg == "-d")
             w = new DoctorWindow();
-        else if (arg == "-s")
+        else if (arg == "-s") {
             std::cerr << "Server mode not yet implemented" << std::endl;
+            return EXIT_FAILURE;
+        }
 
         // Show a window if one was made
         if (w)
