@@ -1,4 +1,4 @@
-#ifndef DCOTORWINDOW_H
+#ifndef DOCTORWINDOW_H
 #define DOCTORWINDOW_H
 
 #include <QMainWindow>
@@ -7,13 +7,16 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class DoctorWindow; }
 QT_END_NAMESPACE
 
-class DoctorWindow : public QMainWindow
-{
+/*!
+ * \brief Displays data relevant to doctors
+ * The doctor window is where a doctor may enter patient relevant data and receive information about patient placement
+ */
+class DoctorWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    DoctorWindow(QWidget *parent = nullptr);
-    ~DoctorWindow();
+    explicit DoctorWindow(QWidget *parent = nullptr);
+    ~DoctorWindow() override;
 
 private:
     Ui::DoctorWindow *ui;

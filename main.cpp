@@ -1,10 +1,11 @@
 #include "hospitalwindow.h"
 #include "doctorwindow.h"
+#include "server.h"
 
 #include <QApplication>
 #include <QString>
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 
 /*!
  * \brief main Entry point of program. Has three operating modes: doctor (-d), hospital (-h), and server (-s)
@@ -12,8 +13,7 @@
  * \param argv Arguments. Please specify operating mode.
  * \return Exit status
  */
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     // Check for operating mode specification
@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
         else if (arg == "-d")
             w = new DoctorWindow();
         else if (arg == "-s") {
-            std::cerr << "Server mode not yet implemented" << std::endl;
-            return EXIT_FAILURE;
+            Server s("http://localhost:8080/hospital");
+            return 0;
         }
 
         // Show a window if one was made
@@ -42,5 +42,5 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    return a.exec();
+    return QApplication::exec();
 }

@@ -7,13 +7,17 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class HospitalWindow; }
 QT_END_NAMESPACE
 
-class HospitalWindow : public QMainWindow
-{
+/*!
+ * \brief Displays data relevant to hospitals
+ * The hospital window is the UI shown the hospital. It is where an administrator may see the filled and available beds,
+ * the status of the hospital, and interact with this data.
+ */
+class HospitalWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    HospitalWindow(QWidget *parent = nullptr);
-    ~HospitalWindow();
+    explicit HospitalWindow(QWidget *parent = nullptr);
+    ~HospitalWindow() override;
 
 private:
     Ui::HospitalWindow *ui;

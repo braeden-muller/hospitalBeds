@@ -25,18 +25,21 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #endif()
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(cpprestsdk REQUIRED)
 
-if(ANDROID)
-  add_library(hospitalBeds SHARED
-    main.cpp
-    hospitalwindow.cpp
-    hospitalwindow.h
-    hospitalwindow.ui
-    doctorwindow.cpp
-    doctorwindow.h
-    doctorwindow.ui
-  )
-else()
+#if(ANDROID)
+#  add_library(hospitalBeds SHARED
+#    main.cpp
+#    hospitalwindow.cpp
+#    hospitalwindow.h
+#    hospitalwindow.ui
+#    doctorwindow.cpp
+#    doctorwindow.h
+#    doctorwindow.ui
+#    server.cpp
+#    server.h
+#  )
+#else()
   add_executable(hospitalBeds
     main.cpp
     hospitalwindow.cpp
@@ -45,7 +48,16 @@ else()
     doctorwindow.cpp
     doctorwindow.h
     doctorwindow.ui
+    server.cpp
+    server.h
   )
-endif()
+#endif()
 
-target_link_libraries(hospitalBeds PRIVATE Qt5::Widgets)
+target_link_libraries(hospitalBeds PRIVATE
+    ssl
+    crypto
+    Qt5::Widgets
+    boost_system
+    cpprestsdk::cpprest
+    curses
+  )
