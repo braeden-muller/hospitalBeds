@@ -19,16 +19,32 @@ using std::endl;
 void handle_get(const http_request &request) {
     cout << "Received GET request" << endl;
 
+    // Form a dummy reply to give back to the client
+    auto reply = json::value::value::array();
+
     // localhost:8080/hospital?foo=bar&a=b
     // The query vars are therefore "foo: bar" and "a: b". vars is a map of these pairs.
     auto vars = uri::split_query(request.request_uri().query());
+
+    // Form the query
+    std::vector<std::string> hospitalQueries;
     for (auto & var : vars) {
+        if (var.first == "hospital")
+            hospitalQueries.push_back(var.second);
         cout << "    " << var.first << ": " << var.second << endl;
     }
 
-    // Form a dummy reply to give back to the client
-    auto reply = json::value::value::object();
-    reply["sample_get_reply"] = JSTR("sample_value");
+    // Poll the database for these values
+    std::string msgs;
+    std::vector<json::value> results;
+    DBConnection::getInstance()->getHospitalData(hospitalQueries, results, msgs);
+
+    // Place results into reply
+    int i = 0;
+    for (auto & hosp : results)
+        reply[i++] = hosp;
+
+    cout << "    " << msgs << endl;
 
     // Send off the assembled reply back to the client
     request.reply(status_codes::OK, reply);

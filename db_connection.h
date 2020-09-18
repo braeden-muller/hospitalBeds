@@ -3,6 +3,8 @@
 
 #include <string>
 #include <map>
+#include <vector>
+#include <cpprest/http_listener.h>
 
 /*!
  * \brief Singleton database connection abstraction
@@ -34,10 +36,19 @@ public:
     /*!
      * \brief Removes the registration for an existing hospital currently remembered by the system
      * \param name The name of the hospital
-     * \param msgs Messages to be returned (e.g. Specific error or success message
+     * \param msgs Messages to be returned (e.g. Specific error or success message)
      * \return true if successful, false otherwise
      */
     bool unregisterHospital(const std::string & name, std::string & msgs);
+
+    /*!
+     * \brief Retrieves hospital data for currently tracked hospitals
+     * \param queries Filters to apply to get a specific hospital
+     * \param results All hospitals matching filters
+     * \param msgs Messages to be returned (e.g. Specific error or success message)
+     * \return true if successful, false otherwise
+     */
+    bool getHospitalData(const std::vector<std::string> & queries, std::vector<web::json::value> & results, std::string & msgs);
 };
 
 #endif //HOSPITALBEDS_DB_CONNECTION_H
