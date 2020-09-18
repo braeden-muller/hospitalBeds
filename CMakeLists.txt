@@ -50,6 +50,8 @@ find_package(cpprestsdk REQUIRED)
     doctorwindow.ui
     server.cpp
     server.h
+    db_connection.cpp
+    db_connection.h
   )
 #endif()
 

@@ -2,6 +2,7 @@
 #define HOSPITALBEDS_SERVER_H
 
 #include <string>
+#include "db_connection.h"
 
 /*!
  * The server manages outside connections and the internal database
@@ -13,9 +14,9 @@ public:
      * \param addr The URL at which to listen on
      */
     explicit Server(const std::string & addr);
+    ~Server();
 private:
     std::string address;
-    //DBConnection db;
 };
 
 

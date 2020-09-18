@@ -2,6 +2,8 @@
 #include <iostream>
 #include <cpprest/http_listener.h>
 
+#define JSTR json::value::string
+
 using namespace web;
 using namespace web::http;
 using namespace web::http::experimental::listener;
@@ -26,7 +28,7 @@ void handle_get(const http_request &request) {
 
     // Form a dummy reply to give back to the client
     auto reply = json::value::value::object();
-    reply["sample_get_reply"] = json::value::string("sample_value");
+    reply["sample_get_reply"] = JSTR("sample_value");
 
     // Send off the assembled reply back to the client
     request.reply(status_codes::OK, reply);
@@ -39,23 +41,39 @@ void handle_get(const http_request &request) {
 void handle_post(const http_request& request) {
     cout << "Received POST request" << endl;
 
+    // Relevant request data
+    std::string action, hospital;
+    std::string feedback = "Action not supported";
+
     // This server expects all POST requests to have a purely JSON body
     // Attempt to get the JSON in the body, will fail if the body is not JSON
     try {
         auto body = request.extract_json().get();
-        cout << "    " << body.serialize() << endl; // Serialize just converts to a UTF-8 string
+        cout << "    Received: " << body.serialize() << endl; // Serialize just converts to a UTF-8 string
+        action = body["action"].as_string();
+        hospital = body["hospital"].as_string();
     }
     catch (const std::exception & e) {
         cout << e.what() << endl;
     }
 
-    // Form a dummy reply to give back to the client
+    // Form a reply to give back to the client
     auto reply = json::value::value::object();
-    reply["sample_post_reply"] = json::value::string("sample_value");
-    reply["sample_reply"] = json::value::string("sample");
+    bool success = false;
+
+    if (!action.empty()) {
+        if (action == "register")
+            success = DBConnection::getInstance()->registerHospital(hospital, feedback);
+        else if (action == "unregister")
+            success = DBConnection::getInstance()->unregisterHospital(hospital, feedback);
+    }
+
+    // Log what the result is
+    cout << "    Result: Request " << (success ? "successful, " : "failed, ") << feedback << endl;
 
     // Send off the assembled reply back to the client
-    request.reply(status_codes::OK, reply);
+    reply["feedback"] = JSTR(feedback);
+    request.reply(success ? status_codes::OK : status_codes::BadRequest, reply);
 }
 
 Server::Server(const std::string & addr) {
@@ -83,4 +101,8 @@ Server::Server(const std::string & addr) {
     catch (const std::exception & e) {
         cout << e.what() << endl;
     }
+}
+
+Server::~Server() {
+    DBConnection::shutdown();
 }
