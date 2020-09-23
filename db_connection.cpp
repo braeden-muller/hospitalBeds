@@ -49,4 +49,31 @@ bool DBConnection::unregisterHospital(const std::string &name, std::string &msgs
     return true;
 }
 
+bool DBConnection::getHospitalData(const std::vector<std::string> &queries,
+                                   std::vector<web::json::value> &results, std::string &msgs) {
+    // If no specific hospital, send back all hospitals
+    if (queries.empty()) {
+        for (auto &h : hospitals) {
+            auto hosp = web::json::value::value::object();
+            hosp["name"] = web::json::value::string(h.first);
+            hosp["registered"] = web::json::value::string(h.second);
+            results.push_back(hosp);
+        }
+    }
+    // If specific hospital, send back only matching hospitals
+    else {
+        for (auto &q : queries) {
+            if (hospitals.count(q) > 0) {
+                auto hosp = web::json::value::value::object();
+                hosp["name"] = web::json::value::string(q);
+                hosp["registered"] = web::json::value::string(hospitals[q]);
+                results.push_back(hosp);
+            }
+            else {
+                msgs.append(q + " not found. ");
+            }
+        }
+    }
+    return true;
+}
 

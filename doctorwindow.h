@@ -18,6 +18,10 @@ public:
     explicit DoctorWindow(QWidget *parent = nullptr);
     ~DoctorWindow() override;
 
+private slots:
+
+    void on_requestBed_pressed();
+
 private:
     Ui::DoctorWindow *ui;
 };
