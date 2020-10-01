@@ -53,32 +53,34 @@ void make_request(http_client & client, method mtd, json::value const & jvalue)
 }
 
 
-Client::Client(const std::wstring key, const std::wstring value, const std::string command)
+Client::Client()
 {
-    http_client client(U("http://localhost")); //change this to address later 
+   client = new http_client("http://localhost"); 
 
    
     //NOTE: may have to change the value paramater into a double instead of just using 
     // a string 
 
     //Useful video https://www.youtube.com/watch?v=D7fiNQX7P5w
- 
-   //json::value::field_map postvalue;
-   //stoped above this line
-   
+
+}
+void Client::sendRequest(std::string aName,std::string hName, const std::string command)
+{
  
    //wcout << L"\nput values\n";
-   auto postvalue = json::value::array();
-   //postvalue[0] = json::value::string(key);
-   //postvalue[1] = json::value::string(value);
+   auto postValue = json::value::array();
+   utility::string_t action = utility::conversions::to_string_t(aName);
+   utility::string_t hospital = utility::conversions::to_string_t(hName);
+   postValue[0] = json::value::string(action);
+   postValue[1] = json::value::string(hospital);
    if (command == "POST")
    {
       //postvalue.push_back(std::make_pair(json::value(key), json::value(value)));
-      make_request(client, methods::POST,json::value::null()/*, json::value::object(postvalue)*/); //post value
+      make_request(*client, methods::POST,postValue); //post value
    }
    else if (command == "GET")
    {
-      make_request(client, methods::GET, json::value::null());// make get request
+      make_request(*client, methods::GET, json::value::null());// make get request
       //auto getvalue = json::value::array(); //get each json value 
    }   
  

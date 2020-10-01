@@ -5,8 +5,11 @@
 #include <string>
 #include <cpprest/http_client.h>
 #include <cpprest/json.h>
+#include <cwchar>
 #include "db_connection.h"
 #pragma comment(lib, "cpprest_2_10")
+
+using namespace web::http::client;
 
 /*!
  * The client sends requests to retrieve and modify resources 
@@ -17,17 +20,13 @@ public:
      * Creates a new client at the specified address. Can only send GETs and POSTS
      * \param addr The URL at which to listen on
      */
-    explicit Client(const std::wstring key, const std::wstring value, const std::string command);
+    explicit Client();
     ~Client();
+    void sendRequest(std::string hospitalName, std::string action, const std::string command);
+    http_client * client;
 private:
     std::string address;
 
 };
-
-//void make_request(http_client & client, method mtd, json::value const & jvalue);
-//pplx::task<http_response> make_task_request(http_client & client, 
-                              //              method mtd, 
-                               //             json::value const & jvalue);
-
 
 #endif //HOSPITALBEDS_CLIENT_H
