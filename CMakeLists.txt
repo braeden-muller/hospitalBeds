@@ -50,6 +50,8 @@ find_package(cpprestsdk REQUIRED)
     doctorwindow.ui
     server.cpp
     server.h
+    client.cpp
+    client.h
     db_connection.cpp
     db_connection.h
   )
