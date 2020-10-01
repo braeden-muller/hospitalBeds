@@ -17,22 +17,28 @@ DoctorWindow::~DoctorWindow() {
 void DoctorWindow::on_requestBed_pressed()
 {
     //TODO: send request to REST client
+    bool requestSent = true;
     switch(ailment)
     {
         case COVID:
-            doctorClient->sendRequest("Carilion-Radford", "COVID-19", "POST");
+            doctorClient->sendRequest("register","Carilion-Radford", "POST");
             break;
         case ER:
+            doctorClient->sendRequest("register","Carilion-Radford", "POST");
             break;
         case INJURY:
+            doctorClient->sendRequest("register","Carilion-Radford", "POST");
             break;
         case ILLNESS:
+            doctorClient->sendRequest("register","Carilion-Radford", "POST");
             break;
         default:
+            ui->requestResponse->setText("Unable to get bed, sorry.");
+            requestSent = false;
             break;
     }
-
-    ui->requestResponse->setText("Your bed has been requested!");
+    if (requestSent)
+        ui->requestResponse->setText("Your bed has been requested!");
 }
 
 void DoctorWindow::on_covidButton_pressed()

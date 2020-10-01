@@ -27,9 +27,11 @@ pplx::task<http_response> make_task_request(http_client & client,
                                             method mtd, 
                                             json::value const & jvalue)
 {
-   return (mtd == methods::GET || mtd == methods::POST) ? 
-      client.request(mtd) : 
-      client.request(mtd);
+   std::cout << "making request right now in the make_task_request method" << std::endl;
+   auto path = utility::conversions::to_string_t("/hospital");
+   return (mtd == methods::GET) ? 
+      client.request(mtd,path) : 
+      client.request(mtd,path,jvalue);
 }
  
 /*!
@@ -43,6 +45,7 @@ void make_request(http_client & client, method mtd, json::value const & jvalue)
    make_task_request(client, mtd, jvalue)
       .then([](http_response response)
       {
+         std::cout << "I survived the make_task_request method" << std::endl;
          if (response.status_code() == status_codes::OK)
          {
             return response.extract_json();
@@ -55,7 +58,7 @@ void make_request(http_client & client, method mtd, json::value const & jvalue)
 
 Client::Client()
 {
-   client = new http_client("http://localhost"); 
+   client = new http_client("http://localhost:8080"); 
 
    
     //NOTE: may have to change the value paramater into a double instead of just using 
@@ -68,13 +71,16 @@ void Client::sendRequest(std::string aName,std::string hName, const std::string 
 {
  
    //wcout << L"\nput values\n";
-   auto postValue = json::value::array();
-   utility::string_t action = utility::conversions::to_string_t(aName);
-   utility::string_t hospital = utility::conversions::to_string_t(hName);
-   postValue[0] = json::value::string(action);
-   postValue[1] = json::value::string(hospital);
+   auto postValue = json::value::object();
+   utility::string_t action = utility::conversions::to_string_t("action");
+   utility::string_t hospital = utility::conversions::to_string_t("hospital");
+   utility::string_t actionType = utility::conversions::to_string_t(aName);
+   utility::string_t hospitalName = utility::conversions::to_string_t(hName);
+   postValue[action] = json::value::string(actionType);
+   postValue[hospital] = json::value::string(hospitalName);
    if (command == "POST")
    {
+      std::cout << "I am posting a request" << std::endl;
       //postvalue.push_back(std::make_pair(json::value(key), json::value(value)));
       make_request(*client, methods::POST,postValue); //post value
    }

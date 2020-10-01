@@ -22,7 +22,7 @@ public:
      */
     explicit Client();
     ~Client();
-    void sendRequest(std::string hospitalName, std::string action, const std::string command);
+    void sendRequest(std::string aName, std::string hName, const std::string command);
     http_client * client;
 private:
     std::string address;
