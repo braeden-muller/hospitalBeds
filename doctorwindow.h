@@ -2,6 +2,7 @@
 #define DOCTORWINDOW_H
 
 #include <QMainWindow>
+#include <QStringList>
 #include "client.h"
 
 QT_BEGIN_NAMESPACE
@@ -25,13 +26,7 @@ private slots:
 
     void on_requestBed_pressed();
 
-    void on_covidButton_pressed();
-
-    void on_erButton_pressed();
-
-    void on_injuryButton_pressed();
-
-    void on_illnessButton_pressed();
+    void on_ailmentSelector_currentIndexChanged(int index);
 
 private:
     Ui::DoctorWindow *ui;

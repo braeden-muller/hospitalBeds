@@ -20,9 +20,9 @@
    <widget class="QPushButton" name="requestBed">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>280</x>
       <y>80</y>
-      <width>201</width>
+      <width>221</width>
       <height>51</height>
      </rect>
     </property>
@@ -33,9 +33,9 @@
    <widget class="QLineEdit" name="requestResponse">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>270</y>
-      <width>201</width>
+      <x>280</x>
+      <y>250</y>
+      <width>221</width>
       <height>31</height>
      </rect>
     </property>
@@ -43,45 +43,43 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QWidget" name="horizontalLayoutWidget">
+   <widget class="QComboBox" name="ailmentSelector">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>150</y>
-      <width>581</width>
-      <height>80</height>
+      <x>360</x>
+      <y>190</y>
+      <width>65</width>
+      <height>22</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="radioLayout">
-     <item>
-      <widget class="QRadioButton" name="covidButton">
-       <property name="text">
-        <string>COVID-19</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="erButton">
-       <property name="text">
-        <string>ER</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="injuryButton">
-       <property name="text">
-        <string>Injury</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="illnessButton">
-       <property name="text">
-        <string>Illness</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="tabletTracking">
+     <bool>false</bool>
+    </property>
+    <property name="editable">
+     <bool>true</bool>
+    </property>
+    <property name="currentIndex">
+     <number>-1</number>
+    </property>
+    <property name="maxVisibleItems">
+     <number>4</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ailmentLabel">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>170</y>
+      <width>47</width>
+      <height>14</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ailments</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

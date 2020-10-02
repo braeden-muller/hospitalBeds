@@ -27,11 +27,8 @@ pplx::task<http_response> make_task_request(http_client & client,
                                             method mtd, 
                                             json::value const & jvalue)
 {
-   std::cout << "making request right now in the make_task_request method" << std::endl;
    auto path = utility::conversions::to_string_t("/hospital");
-   return (mtd == methods::GET) ? 
-      client.request(mtd,path) : 
-      client.request(mtd,path,jvalue);
+   return (mtd == methods::GET) ? client.request(mtd,path) : client.request(mtd,path,jvalue);
 }
  
 /*!
@@ -45,12 +42,8 @@ void make_request(http_client & client, method mtd, json::value const & jvalue)
    make_task_request(client, mtd, jvalue)
       .then([](http_response response)
       {
-         std::cout << "I survived the make_task_request method" << std::endl;
-         if (response.status_code() == status_codes::OK)
-         {
-            return response.extract_json();
-         }
-         return pplx::task_from_result(json::value());
+         return (response.status_code() == status_codes::OK) ?
+             response.extract_json() : pplx::task_from_result(json::value());
       })
       .wait();
 }
@@ -59,11 +52,6 @@ void make_request(http_client & client, method mtd, json::value const & jvalue)
 Client::Client()
 {
    client = new http_client("http://localhost:8080"); 
-
-   
-    //NOTE: may have to change the value paramater into a double instead of just using 
-    // a string 
-
     //Useful video https://www.youtube.com/watch?v=D7fiNQX7P5w
 
 }

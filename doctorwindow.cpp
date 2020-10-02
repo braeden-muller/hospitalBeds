@@ -3,6 +3,9 @@
 
 DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::DoctorWindow) {
     ui->setupUi(this);
+    QStringList list = (QStringList() << "COVID" << "ER" << "Injury" << "Illness");
+    ui->ailmentSelector->addItems(list);
+    ui->ailmentSelector->setCurrentIndex(0); //default to COVID
     ailment = COVID; //default ailement is currently COVID
     doctorClient = new Client();
 }
@@ -41,22 +44,7 @@ void DoctorWindow::on_requestBed_pressed()
         ui->requestResponse->setText("Your bed has been requested!");
 }
 
-void DoctorWindow::on_covidButton_pressed()
+void DoctorWindow::on_ailmentSelector_currentIndexChanged(int index)
 {
-    ailment = COVID;
-}
-
-void DoctorWindow::on_erButton_pressed()
-{
-    ailment = ER;
-}
-
-void DoctorWindow::on_injuryButton_pressed()
-{
-    ailment = INJURY;
-}
-
-void DoctorWindow::on_illnessButton_pressed()
-{
-    ailment = ILLNESS;
+    ailment = (index == 0) ? COVID : (index == 1) ? ER : (index == 2) ? INJURY : (index == 3) ? ILLNESS : COVID;
 }
