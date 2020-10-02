@@ -23,17 +23,19 @@ void DoctorWindow::on_requestBed_pressed()
     bool requestSent = true;
     switch(ailment)
     {
+    //Potentially wait for response to ensure request was sent properly, this could be
+    //printing something to the screen.
         case COVID:
             doctorClient->sendRequest("register","Carilion-Radford", "POST");
             break;
         case ER:
-            doctorClient->sendRequest("register","Carilion-Radford", "POST");
+            doctorClient->sendRequest("register","Carilion-Roanoke", "POST");
             break;
         case INJURY:
-            doctorClient->sendRequest("register","Carilion-Radford", "POST");
+            doctorClient->sendRequest("register","Centra-Lynchburg", "POST");
             break;
         case ILLNESS:
-            doctorClient->sendRequest("register","Carilion-Radford", "POST");
+            doctorClient->sendRequest("register","Centra-Charlottesville", "POST");
             break;
         default:
             ui->requestResponse->setText("Unable to get bed, sorry.");
@@ -46,5 +48,6 @@ void DoctorWindow::on_requestBed_pressed()
 
 void DoctorWindow::on_ailmentSelector_currentIndexChanged(int index)
 {
+    ui->requestResponse->clear(); //clear the text box before new request
     ailment = (index == 0) ? COVID : (index == 1) ? ER : (index == 2) ? INJURY : (index == 3) ? ILLNESS : COVID;
 }
