@@ -51,12 +51,11 @@ void handle_post(const http_request& request) {
 
     // Relevant request data
     std::string hospital;
-    std::string feedback = "Action not supported";
 
     // This server expects all POST requests to have a purely JSON body
     // Attempt to get the JSON in the body, will fail if the body is not JSON
+    auto body = request.extract_json().get();
     try {
-        auto body = request.extract_json().get();
         cout << "    Received: " << body.serialize() << endl; // Serialize just converts to a UTF-8 string
         hospital = body["hospital"].as_string();
 
@@ -71,10 +70,9 @@ void handle_post(const http_request& request) {
     }
 
     // Form a reply to give back to the client
-    auto reply = json::value::value::object();
+    auto reply = body; // DEBUG for now this just mirrors the client request
 
     // Send off the assembled reply back to the client
-    reply["feedback"] = JSTR(feedback);
     request.reply(status_codes::OK, reply);
 }
 
