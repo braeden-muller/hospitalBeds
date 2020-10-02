@@ -77,4 +77,37 @@ bool DBConnection::getHospitalData(const std::vector<std::string> &queries,
     return true;
 }
 
+static int C_Callback(void *data, int argc, char **argv, char **columnName) {
+    DBConnection* database = reinterpret_cast<DBConnection*>(data);
+    return database->databaseCallback(argc, argv, columnName);
+}
 
+
+bool DBConnection::testDatabase(const char *database, std::string & msgs) {
+    int error = 0;
+    char *zerrMsg = 0;
+    error = sqlite3_open(database, &db);
+    if (error) {
+        msgs.append("database not found");
+        sqlite3_close(db);
+        return false;
+    }
+    error = sqlite3_exec(db, "SELECT * FROM hospital", C_Callback, this, &zerrMsg);
+    if (error) {
+        msgs.append("could not open hospital table");
+        sqlite3_close(db);
+        return false;
+    }
+    sqlite3_close(db);
+    std::cout<<"testing: "<<testing<<std::endl;
+    return true;
+}
+
+int DBConnection::databaseCallback(int argc, char **argv, char **columnName)
+{
+    for (int i = 0; i < argc; i++) { 
+        printf("%s = %s\n", columnName[i], argv[i] ? argv[i] : "NULL");
+        testing.append(argv[i]);
+    }    
+    return 0;
+}
