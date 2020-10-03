@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <string>
+#include <chrono>
 #include <cpprest/http_client.h>
 #include <cpprest/json.h>
 #include <cwchar>
