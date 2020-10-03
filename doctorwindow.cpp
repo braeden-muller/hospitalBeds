@@ -35,7 +35,7 @@ void DoctorWindow::on_requestBed_pressed()
             doctorClient->sendRequest("register","Centra-Lynchburg", "POST");
             break;
         case ILLNESS:
-            doctorClient->sendRequest("register","Centra-Charlottesville", "POST");
+            doctorClient->sendRequest("register","UVAMC-Charlottesville", "POST");
             break;
         default:
             ui->requestResponse->setText("Unable to get bed, sorry.");

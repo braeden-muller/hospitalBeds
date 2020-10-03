@@ -54,6 +54,8 @@ find_package(cpprestsdk REQUIRED)
     client.h
     db_connection.cpp
     db_connection.h
+    hospital.cpp
+    hospital.h
   )
 #endif()
 
