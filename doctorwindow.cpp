@@ -20,30 +20,34 @@ DoctorWindow::~DoctorWindow() {
 void DoctorWindow::on_requestBed_pressed()
 {
     //TODO: send request to REST client
-    bool requestSent = true;
+    Hospital h; //not actually setting the bed, yet this should be fixed
+    std::string hos = "";
     switch(ailment)
     {
-    //Potentially wait for response to ensure request was sent properly, this could be
-    //printing something to the screen.
+     //Potentially wait for response to ensure request was sent properly, this could be
+     //printing something to the screen.
         case COVID:
-            doctorClient->sendRequest("register","Carilion-Radford", "POST");
+            h.findBed("COVID");
+            hos = h.stringify();
+            doctorClient->sendRequest("register",hos, "POST");
             break;
         case ER:
-            doctorClient->sendRequest("register","Carilion-Roanoke", "POST");
+            h.findBed("ER");
+            hos = h.stringify();
+            doctorClient->sendRequest("register",hos, "POST");
             break;
         case INJURY:
-            doctorClient->sendRequest("register","Centra-Lynchburg", "POST");
+            h.findBed("INJURY");
+            hos = h.stringify();
+            doctorClient->sendRequest("register",hos, "POST");
             break;
         case ILLNESS:
-            doctorClient->sendRequest("register","UVAMC-Charlottesville", "POST");
+            h.findBed("ILLNESS");
+            hos = h.stringify();
+            doctorClient->sendRequest("register",hos, "POST");
             break;
-        default:
-            ui->requestResponse->setText("Unable to get bed, sorry.");
-            requestSent = false;
-            break;
-    }
-    if (requestSent)
-        ui->requestResponse->setText("Your bed has been requested!");
+      }
+      ui->requestResponse->setText("Your bed has been requested!");
 }
 
 void DoctorWindow::on_ailmentSelector_currentIndexChanged(int index)

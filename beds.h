@@ -14,11 +14,12 @@ class Beds
             timestamp = std::string(std::ctime(&now));
         }
 
-        void setBed(std::string currentTime, bool occupied);
         ~Beds();
+        bool occupied; //boolean to show if the bed is occupied
+        void setBed(void);
+ 
     private:
-        std::string timestamp; //timestamp for when the bed is requested 
-        bool occupied; //boolean to show if the bed is occupied 
+        std::string timestamp; //timestamp for when the bed is requested  
         std::vector<std::string> specialties; //This will contain the specialties that the bed can have
         std::vector<std::string> handles;  //This will contain ID, Current occupent ailment if occupied
 

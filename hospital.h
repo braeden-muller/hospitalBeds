@@ -2,6 +2,7 @@
 #define HOSPITALBEDS_HOSPITAL_H
 
 #include "beds.h"
+#include <stdio.h>
 
 class Hospital 
 {
@@ -17,6 +18,13 @@ public:
     Hospital(std::string newLoc);
     ~Hospital();
 
+    bool findBed(std::string ailment); //with the ailment you can look at specificty in the bed
+
+    std::string stringify(void); //return the hospital class as a string
+
+    std::string listBeds(void); //list each bed in the hospital and then whether that bed is occupied
+
+private:
     std::vector<Beds> beds;
     std::size_t totalBeds;
     std::string location;

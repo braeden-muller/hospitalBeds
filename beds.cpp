@@ -10,7 +10,9 @@ Beds::~Beds()
             occupied = false;
 }
 
-void Beds::setBed(std::string currentTime, bool occupied)
+void Beds::setBed(void)
 {
-    //TODO
+    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    timestamp = std::string(std::ctime(&now));
+    occupied = true; 
 }

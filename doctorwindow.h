@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QStringList>
 #include "client.h"
+#include "hospital.h"
+
+#define JSTR json::value::string
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DoctorWindow; }

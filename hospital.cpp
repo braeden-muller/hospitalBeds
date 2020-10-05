@@ -27,3 +27,35 @@ Hospital::~Hospital()
     beds.clear();
     beds.shrink_to_fit();
 }
+
+bool Hospital::findBed(std::string ailment)
+{
+    bool set = false;
+    for (auto a : beds)
+    {
+        if (!a.occupied)
+        {
+            a.setBed();
+            set = true;
+            break;
+        }
+    }
+    return set;
+}
+
+std::string Hospital::stringify()
+{
+    return "{location: " + location +" , name: " + name + ", " + listBeds();
+}
+
+std::string Hospital::listBeds()
+{
+    int bedNumber = 0;
+    std::string list = "";
+    for (auto b : beds)
+    {
+        std::string full = (b.occupied) ? "True" : "False";
+        list += "Bed" + std::to_string(bedNumber) + " : " + full + ", ";
+    }
+    return list + "}" ;
+}
