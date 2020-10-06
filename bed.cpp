@@ -1,9 +1,3 @@
-//
-// Created by bmuller on 10/2/20.
-//
-
-#include <iostream>
-#include <cpprest/json.h>
 #include <set>
 #include "bed.h"
 
@@ -17,40 +11,8 @@ void addConditions(std::set<condition> * receptacle, const web::json::value & j_
         // Reference the condition in the map of conditions using the string that represents the condition
         // Since this operation returns a map of condition-wrappers, use .c to get the condition
         // Finally add it to the set
-        receptacle->emplace(conditions[j_condition.as_string()].c);
+        receptacle->emplace(conditions_by_name[j_condition.as_string()].c);
     }
-}
-
-// This is for debug, will be removed in a future version. Don't bother updating it.
-std::string set_to_str(const std::set<condition> & my_set) {
-    std::string out_val = "[";
-    for (condition entry : my_set) {
-        switch (entry) {
-            case burn:
-                out_val += "burn,";
-                break;
-            case injury:
-                out_val += "injury,";
-                break;
-            case radiation:
-                out_val += "radiation,";
-                break;
-            case scan:
-                out_val += "scan,";
-                break;
-            case unknown:
-                out_val += "unknown,";
-                break;
-            case virus:
-                out_val += "virus,";
-                break;
-        }
-    }
-
-    if (out_val.size() > 1)
-        out_val.pop_back();
-
-    return out_val + "]";
 }
 
 Bed::Bed(web::json::value & spec) {
@@ -59,12 +21,23 @@ Bed::Bed(web::json::value & spec) {
     timestamp = spec["timestamp"].as_integer();
     addConditions(&handles, spec["handles"]);
     addConditions(&special, spec["special"]);
+}
 
-    // DEBUG
-    std::cout << "bed_" << id << " {" << std::endl
-        << "    timestamp : " << timestamp << std::endl
-        << "    isFull : " << (isFull ? "true" : "false") << std::endl
-        << "    handles : " << set_to_str(handles) << std::endl
-        << "    special : " << set_to_str(special) << std::endl
-        << "}" << std::endl;
+web::json::value Bed::jsonify() {
+    web::json::value j_bed;
+    j_bed["id"] = id;
+    j_bed["timestamp"] = timestamp;
+    j_bed["isFull"] = JBOOL(isFull);
+
+    int i = 0;
+    for (const auto & handle : handles) {
+        j_bed["handles"][i++] = JSTR(name_by_conditions[handle]);
+    }
+
+    i = 0;
+    for (const auto & spec : special) {
+        j_bed["special"][i++] = JSTR(name_by_conditions[spec]);
+    }
+
+    return j_bed;
 }

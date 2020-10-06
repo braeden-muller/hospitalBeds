@@ -42,18 +42,13 @@ find_package(cpprestsdk REQUIRED)
 #else()
   add_executable(hospitalBeds
     main.cpp
-    hospitalwindow.cpp
-    hospitalwindow.h
-    hospitalwindow.ui
-    doctorwindow.cpp
-    doctorwindow.h
-    doctorwindow.ui
-    server.cpp
-    server.h
-    db_connection.cpp
-    db_connection.h
-    bed.cpp
-    bed.h
+    hospitalwindow.cpp hospitalwindow.h hospitalwindow.ui
+    doctorwindow.cpp   doctorwindow.h   doctorwindow.ui
+    server.cpp         server.h
+    db_connection.cpp  db_connection.h
+    bed.cpp            bed.h
+    hospital.cpp       hospital.h
+                       json_def.h
   )
 #endif()
 

@@ -1,13 +1,10 @@
-//
-// Created by bmuller on 10/2/20.
-//
-
 #ifndef HOSPITALBEDS_BED_H
 #define HOSPITALBEDS_BED_H
 
 #include <set>
 #include <string>
 #include <map>
+#include "json_def.h"
 
 /*!
  * A condition represents a distinct capability a bed has
@@ -33,7 +30,7 @@ struct __condition {
 /*!
  * This is a map that allows a string to be used to quickly reference a condition
  */
-static auto conditions = []{ // NOLINT(cert-err58-cpp)
+static auto conditions_by_name = []{ // NOLINT(cert-err58-cpp)
     // The map stores a __condition instead of a condition so if an undefined condition is specified, it is categorized
     // as unknown instead of something random
     std::map<std::string, __condition> m;
@@ -46,11 +43,24 @@ static auto conditions = []{ // NOLINT(cert-err58-cpp)
 }();
 
 /*!
+ * Reverse of other map
+ */
+static auto name_by_conditions = []{ // NOLINT(cert-err58-cpp)
+    std::map<condition, std::string> m;
+    for (const auto& c : conditions_by_name) {
+        m[c.second.c] = c.first;
+    }
+    return m;
+}();
+
+/*!
  * This represents all the data associated with a single bed in a hospital
  */
 class Bed {
 public:
     explicit Bed(web::json::value & spec);
+    /// Converts this object to json
+    web::json::value jsonify();
 private:
     int id;
     bool isFull;

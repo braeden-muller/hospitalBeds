@@ -1,9 +1,8 @@
 #include "server.h"
 #include "bed.h"
+#include "hospital.h"
 #include <iostream>
 #include <cpprest/http_listener.h>
-
-#define JSTR json::value::string
 
 using namespace web;
 using namespace web::http;
@@ -16,6 +15,7 @@ using std::endl;
 /* SAMPLE POST REQUEST
 {
     "hospital": "general_hospital",
+    "location": [-42.629, 70.233],
     "beds": [
         {
             "id": 0,
@@ -50,19 +50,26 @@ void handle_post(const http_request& request) {
     cout << "Received POST request" << endl;
 
     // Relevant request data
-    std::string hospital;
+
+    Hospital hospital;
 
     // This server expects all POST requests to have a purely JSON body
     // Attempt to get the JSON in the body, will fail if the body is not JSON
     auto body = request.extract_json().get();
     try {
         cout << "    Received: " << body.serialize() << endl; // Serialize just converts to a UTF-8 string
-        hospital = body["hospital"].as_string();
 
-        std::vector<Bed> beds;
-        auto jbeds = body["beds"].as_array();
-        for (auto & jbed : jbeds) {
-            Bed this_bed = Bed(jbed);
+        // Parse hospital name
+        hospital.set_name(body["hospital"].as_string());
+
+        // Parse hospital location
+        auto location = body["location"].as_array();
+        hospital.set_location(location[0].as_double(), location[1].as_double());
+
+        // Parse hospital beds
+        auto j_beds = body["beds"].as_array();
+        for (auto & j_bed : j_beds) {
+            hospital.add_bed(Bed(j_bed));
         }
     }
     catch (const std::exception & e) {
@@ -70,10 +77,10 @@ void handle_post(const http_request& request) {
     }
 
     // Form a reply to give back to the client
-    auto reply = body; // DEBUG for now this just mirrors the client request
+    //auto reply = body; // DEBUG for now this just mirrors the client request
 
     // Send off the assembled reply back to the client
-    request.reply(status_codes::OK, reply);
+    request.reply(status_codes::OK, hospital.jsonify());
 }
 
 Server::Server(const std::string & addr) {
