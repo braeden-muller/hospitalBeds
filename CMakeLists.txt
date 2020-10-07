@@ -26,6 +26,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(cpprestsdk REQUIRED)
+find_package(SQLite3 REQUIRED)
 
 #if(ANDROID)
 #  add_library(hospitalBeds SHARED
@@ -48,7 +49,8 @@ find_package(cpprestsdk REQUIRED)
     db_connection.cpp  db_connection.h
     bed.cpp            bed.h
     hospital.cpp       hospital.h
-                       json_def.h
+    sqlite3.c          sqlite3.h
+                       json_def.h    
   )
 #endif()
 
@@ -59,4 +61,5 @@ target_link_libraries(hospitalBeds PRIVATE
     boost_system
     cpprestsdk::cpprest
     curses
+    sqlite3
   )
