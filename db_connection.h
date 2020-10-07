@@ -17,6 +17,7 @@ private:
     std::string testing; // temporary testing string to ensure db receive.
     std::map<std::string, std::string> hospitals; // Temporary, proof of concept. Replace with database.
     DBConnection();
+  ~DBConnection();
 public:
     /*!
      * \return A pointer to the current instance of the database connection

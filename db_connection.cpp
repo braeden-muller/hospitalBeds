@@ -9,6 +9,10 @@ DBConnection::DBConnection() {
   
 }
 
+DBConnection::~DBConnection() {
+    sqlite3_close(db);
+}
+
 DBConnection *DBConnection::instance = nullptr;
 
 DBConnection* DBConnection::getInstance() {
@@ -94,21 +98,12 @@ static int C_Callback(void *data, int argc, char **argv, char **columnName) {
 bool DBConnection::importDatabase(std::string & msgs) {
     int error = 0;
     char *zerrMsg = 0;
-    //sqlite3_open("hospitalBeds.db", &db);
-    // error = sqlite3_open(database, &db);
-    // if (error) {
-    //     msgs.append("database not found");
-    //     sqlite3_close(db);
-    //     return false;
-    // }
     error = sqlite3_exec(db, "SELECT * FROM hospital", C_Callback, this, &zerrMsg);
     if (error) {
         msgs.append("could not open hospital table");
         sqlite3_close(db);
         return false;
     }
-    sqlite3_close(db);
-    // std::cout<<"testing: "<<testing<<std::endl;
     return true;
 }
 
