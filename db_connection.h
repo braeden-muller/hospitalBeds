@@ -16,7 +16,7 @@ private:
     sqlite3 * db;
     std::string testing; // temporary testing string to ensure db receive.
     std::map<std::string, std::string> hospitals; // Temporary, proof of concept. Replace with database.
-    DBConnection() = default;
+    DBConnection();
 public:
     /*!
      * \return A pointer to the current instance of the database connection
@@ -54,12 +54,11 @@ public:
     bool getHospitalData(const std::vector<std::string> & queries, std::vector<web::json::value> & results, std::string & msgs);
 
     /*!
-     * \brief Tests the database insertion and retrieval
-     * \param database string containing database filename
+     * \brief Imports the database
      * \param msgs Messages to be returned (e.g. Specific error or success message)
      * \return true if successful, false otherwise
      */
-    bool testDatabase(const char *database, std::string & msgs);
+    bool importDatabase(std::string & msgs);
 
     /*!
      * \brief inserts the database contents into the class structure

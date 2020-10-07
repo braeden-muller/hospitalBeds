@@ -1,6 +1,14 @@
 #include <chrono>
 #include "db_connection.h"
 
+DBConnection::DBConnection() {
+    int error = sqlite3_open("hospitalBeds.db", &db);
+    if (error) {
+        sqlite3_close(db);
+    }
+  
+}
+
 DBConnection *DBConnection::instance = nullptr;
 
 DBConnection* DBConnection::getInstance() {
@@ -83,15 +91,16 @@ static int C_Callback(void *data, int argc, char **argv, char **columnName) {
 }
 
 
-bool DBConnection::testDatabase(const char *database, std::string & msgs) {
+bool DBConnection::importDatabase(std::string & msgs) {
     int error = 0;
     char *zerrMsg = 0;
-    error = sqlite3_open(database, &db);
-    if (error) {
-        msgs.append("database not found");
-        sqlite3_close(db);
-        return false;
-    }
+    //sqlite3_open("hospitalBeds.db", &db);
+    // error = sqlite3_open(database, &db);
+    // if (error) {
+    //     msgs.append("database not found");
+    //     sqlite3_close(db);
+    //     return false;
+    // }
     error = sqlite3_exec(db, "SELECT * FROM hospital", C_Callback, this, &zerrMsg);
     if (error) {
         msgs.append("could not open hospital table");
@@ -99,7 +108,7 @@ bool DBConnection::testDatabase(const char *database, std::string & msgs) {
         return false;
     }
     sqlite3_close(db);
-    std::cout<<"testing: "<<testing<<std::endl;
+    // std::cout<<"testing: "<<testing<<std::endl;
     return true;
 }
 

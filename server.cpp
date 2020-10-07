@@ -97,7 +97,7 @@ Server::Server(const std::string & addr) {
     cout << "Starting server at [" << address << "]. Type 'q' to exit." << endl;
     DBConnection *newDatabase = DBConnection::getInstance();
     std::string errMsg;
-    newDatabase->testDatabase("hospitalBeds.db", errMsg);
+    newDatabase->importDatabase(errMsg);
     // Begin listening at the specified address and register the two helper functions
     http_listener listener(address);
     listener.support(methods::GET, handle_get);
