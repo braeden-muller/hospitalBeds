@@ -24,6 +24,7 @@ using std::endl;
  * \param jvalue The json value that can be sent to the console  
  */
 pplx::task<http_response> make_task_request(http_client & client, 
+
                                             method mtd, 
                                             json::value const & jvalue)
 {
@@ -71,22 +72,22 @@ Client::Client()
     //Useful video https://www.youtube.com/watch?v=D7fiNQX7P5w
 
 }
-void Client::sendRequest(std::string aName,std::string hName, const std::string command)
+void Client::sendRequest(std::string command, web::json::value hospital)
 {
  
    //wcout << L"\nput values\n";
-   auto postValue = json::value::object();
+   /*auto postValue = json::value::object();
    utility::string_t action = utility::conversions::to_string_t("action");
    utility::string_t hospital = utility::conversions::to_string_t("hospital");
    utility::string_t actionType = utility::conversions::to_string_t(aName);
    utility::string_t hospitalName = utility::conversions::to_string_t(hName);
    postValue[action] = json::value::string(actionType);
-   postValue[hospital] = json::value::string(hospitalName);
+   postValue[hospital] = json::value::string(hospitalName);*/
    if (command == "POST")
    {
       std::cout << "I am posting a request" << std::endl;
       //postvalue.push_back(std::make_pair(json::value(key), json::value(value)));
-      make_request(*client, methods::POST,postValue); //post value
+      make_request(*client, methods::POST,hospital); //post value
    }
    else if (command == "GET")
    {

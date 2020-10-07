@@ -21,7 +21,7 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>80</y>
+      <y>220</y>
       <width>221</width>
       <height>51</height>
      </rect>
@@ -34,7 +34,7 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>250</y>
+      <y>310</y>
       <width>221</width>
       <height>31</height>
      </rect>
@@ -46,8 +46,8 @@
    <widget class="QComboBox" name="ailmentSelector">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>190</y>
+      <x>280</x>
+      <y>170</y>
       <width>65</width>
       <height>22</height>
      </rect>
@@ -71,14 +71,40 @@
    <widget class="QLabel" name="ailmentLabel">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>170</y>
+      <x>290</x>
+      <y>150</y>
       <width>47</width>
       <height>14</height>
      </rect>
     </property>
     <property name="text">
      <string>Ailments</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="locationSelector">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>170</y>
+      <width>61</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="editable">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="locationLabel">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>150</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Location</string>
     </property>
    </widget>
   </widget>

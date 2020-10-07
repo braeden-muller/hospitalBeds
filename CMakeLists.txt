@@ -56,8 +56,9 @@ find_package(cpprestsdk REQUIRED)
     db_connection.h
     hospital.cpp
     hospital.h
-    beds.cpp
-    beds.h
+    bed.cpp
+    bed.h
+    json_def.h
   )
 #endif()
 

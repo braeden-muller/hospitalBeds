@@ -1,61 +1,27 @@
 #include "hospital.h"
 
-//Provide a location and the hospital will be assigned based on the given city 
-Hospital::Hospital(std::string newLoc)
-{
-    location = (newLoc == "Christiansburg") ? "2900 Lamb Cir, Christiansburg, VA 24073" :
-               (newLoc == "Lynchburg") ? "1901 Tate Springs Rd, Lynchburg, VA 24501" :
-               (newLoc == "Roanoke") ? "1906 Belleview Ave SE, Roanoke, VA 24014" :
-               (newLoc == "Bristol") ? "1 Medical Park Blvd, Bristol, TN 37620" :
-               (newLoc == "Princeton") ? "122 12th St, Princeton, WV 24740" : "INVALID";
-
-    name =  (newLoc == "Christiansburg") ? "Carilion New River Valley Medical Center" :
-               (newLoc == "Lynchburg") ? "Centra Lynchburg General Hospital" :
-               (newLoc == "Roanoke") ? "Carilion Roanoke Memorial Hospital" :
-               (newLoc == "Bristol") ? "Bristol Regional Medical Center" :
-               (newLoc == "Princeton") ? "Princeton Community Hospital" : "INVALID";
-
-    totalBeds = (newLoc == "Christiansburg") ? 110 :
-                (newLoc == "Lynchburg") ? 358 :
-                (newLoc == "Roanoke") ? 703 :
-                (newLoc == "Bristol") ? 269 :
-                (newLoc == "Princeton") ? 267 : -1;
+void Hospital::set_name(const std::string &name) {
+    _name = name;
 }
 
-Hospital::~Hospital()
-{
-    beds.clear();
-    beds.shrink_to_fit();
+void Hospital::set_location(double lat, double lon) {
+    location.first = lat;
+    location.second = lon;
 }
 
-bool Hospital::findBed(std::string ailment)
-{
-    bool set = false;
-    for (auto a : beds)
-    {
-        if (!a.occupied)
-        {
-            a.setBed();
-            set = true;
-            break;
-        }
+void Hospital::add_bed(const Bed& bed) {
+    beds.push_back(bed);
+}
+
+web::json::value Hospital::jsonify() {
+    web::json::value j_hospital;
+    j_hospital["hospital"] = JSTR(_name);
+    j_hospital["location"][0] = location.first;
+    j_hospital["location"][1] = location.second;
+
+    for (int i = 0; i < beds.size(); i++) {
+        j_hospital["beds"][i] = beds[i].jsonify();
     }
-    return set;
-}
 
-std::string Hospital::stringify()
-{
-    return "{location: " + location +" , name: " + name + ", " + listBeds();
-}
-
-std::string Hospital::listBeds()
-{
-    int bedNumber = 0;
-    std::string list = "";
-    for (auto b : beds)
-    {
-        std::string full = (b.occupied) ? "True" : "False";
-        list += "Bed" + std::to_string(bedNumber) + " : " + full + ", ";
-    }
-    return list + "}" ;
+    return j_hospital;
 }

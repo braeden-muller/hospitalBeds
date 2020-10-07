@@ -6,13 +6,15 @@
 #include "client.h"
 #include "hospital.h"
 
-#define JSTR json::value::string
+#define NUM_HOSPITALS 5
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DoctorWindow; }
 QT_END_NAMESPACE
 
-enum Ailment { COVID, ER, INJURY, ILLNESS };
+//enum Ailment { INJURY, BURN, VIRUS, RADIATION, PSYCH, RESP, CARDIAC};
+
+enum Location { CHRISTIANSBURG, ROANOKE, PRINCETON, LYNCHBURG, BRISTOL };
 
 /*!
  * \brief Displays data relevant to doctors
@@ -31,9 +33,16 @@ private slots:
 
     void on_ailmentSelector_currentIndexChanged(int index);
 
+    void on_locationSelector_currentIndexChanged(int index);
+
 private:
     Ui::DoctorWindow *ui;
-    Ailment ailment;
+    std::string ailment;
     Client * doctorClient;
+    std::vector<Hospital> * hospitals;
+    web::json::value hospitalAsJSON;
+    Location location;
+    int bedCall;
 };
 #endif // DOCTORWINDOW_H
+
