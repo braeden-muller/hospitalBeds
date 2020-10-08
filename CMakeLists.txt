@@ -46,6 +46,7 @@ find_package(SQLite3 REQUIRED)
     hospitalwindow.cpp hospitalwindow.h hospitalwindow.ui
     doctorwindow.cpp   doctorwindow.h   doctorwindow.ui
     server.cpp         server.h
+    client.cpp         client.h
     db_connection.cpp  db_connection.h
     bed.cpp            bed.h
     hospital.cpp       hospital.h
