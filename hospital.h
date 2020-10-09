@@ -14,13 +14,18 @@ public:
     Hospital() = default;
     void set_name(const std::string & name);
     void set_location(double lat, double lon);
-    void add_bed(const Bed& bed);
+    void set_id(int id);
+    bool add_bed(const Bed& bed);
     /// Converts this object to json
     web::json::value jsonify();
 private:
     std::string _name;
     std::pair<double, double> location;
     std::vector<Bed> beds;
+    std::size_t max_beds;
+    int _id;
+
+    void set_max_beds(); //helper function used to set max beds
 };
 
 

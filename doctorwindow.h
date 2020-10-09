@@ -12,8 +12,6 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class DoctorWindow; }
 QT_END_NAMESPACE
 
-//enum Ailment { INJURY, BURN, VIRUS, RADIATION, PSYCH, RESP, CARDIAC};
-
 enum Location { CHRISTIANSBURG, ROANOKE, PRINCETON, LYNCHBURG, BRISTOL };
 
 /*!
@@ -36,14 +34,13 @@ private slots:
     void on_locationSelector_currentIndexChanged(int index);
 
 private:
-    Ui::DoctorWindow *ui;
-    std::string ailment;
-    Client * doctorClient;
-    std::vector<Hospital> * hospitals;
-    web::json::value hospitalAsJSON;
-    Location location;
-    int bedCall;
-    std::chrono::time_point<std::chrono::steady_clock> start;
+    Ui::DoctorWindow *ui; //the pointer to main display
+    std::string ailment; //string for the ailment
+    Client * doctorClient; //used to send request to client
+    std::vector<std::tuple<std::size_t, Hospital,bool>>* hospitals; //vector of tuples for <bedID, hospital, full>
+    Location location; //enum for the location chosen from drop down menu
+    std::chrono::time_point<std::chrono::steady_clock> start; //time that all time stamps are based off of
+
+    void addHospital(Hospital & h, web::json::value & bedSpec); //helper function to add hospital
 };
 #endif // DOCTORWINDOW_H
-
