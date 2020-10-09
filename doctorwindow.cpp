@@ -54,14 +54,13 @@ void DoctorWindow::on_requestBed_pressed()
     bedSpec[timestamp] = web::json::value::number(std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count());
 
     std::set<condition> addedHandles;
-    utility::string_t handleVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
-                                        utility::conversions::to_string_t("radiation"), utility::conversions::to_string_t("virus")};
+    utility::string_t handleVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn")};
 
-    auto json_handles_val = web::json::value(handleVector);
-    auto & json_handles_arr = json_handles_val.as_array();
-    for (auto & j : json_handles_arr)
+    //auto json_handles_val = web::json::value(handleVector);
+    //auto & json_handles_arr = json_handles_val.as_array();
+    for (auto s = 0; s < 2; ++s)
     {
-      addedHandles.emplace(conditions_by_name[j.as_string()].c);
+      addedHandles.emplace(conditions_by_name[handleVector[s]].c);
     }
     int count = 0;
     for (auto h : addedHandles)
@@ -71,11 +70,11 @@ void DoctorWindow::on_requestBed_pressed()
     std::cout << "Made it before sepcial " << std::endl;
     std::set<condition> addedSpecial;
     utility::string_t specialVector[] = {utility::conversions::to_string_t(ailment)};
-    auto json_special_val = web::json::value(specialVector);
-    auto & json_special_arr = json_special_val.as_array();
-    for (auto & j : json_special_arr)
+    //auto json_special_val = web::json::value(specialVector);
+  //  auto & json_special_arr = json_special_val.as_array();
+    for (auto i = 0; i < 1; ++i)
     {
-      addedSpecial.emplace(conditions_by_name[j.as_string()].c);
+      addedSpecial.emplace(conditions_by_name[specialVector[i]].c);
     }
     count = 0;
     for (auto s : addedSpecial)
