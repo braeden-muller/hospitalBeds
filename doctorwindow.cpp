@@ -8,11 +8,6 @@
 DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::DoctorWindow) {
     ui->setupUi(this);
     //7 Special Symptoms for the Doctor to Choose From
-    QStringList listAilments = (QStringList() << "injury" << "burn" << "virus" << "radiation" << "scan" << "psychiatric" << "respiratory" << "cardiac");
-    ui->ailmentSelector->addItems(listAilments);
-    ui->ailmentSelector->setCurrentIndex(0);
-    ailment = "injury"; //default ailement is currently injury
-
     //Right now there are 5 hospital locations for our clients in SWVA
     QStringList listLocations = (QStringList() << "Christiansburg, VA" << "Roanoke, VA" << "Princeton, WV" << "Lyncburg, VA" << "Bristol, TN");
     ui->locationSelector->addItems(listLocations);
@@ -74,10 +69,15 @@ void DoctorWindow::on_requestBed_pressed()
       bedSpec[handles][count++] = JSTR(name_by_conditions[a]);
     }
     std::set<condition> addedSpecial;
-    utility::string_t specialVector[] = {utility::conversions::to_string_t(ailment)};
-    for (auto i = 0; i < 1; ++i)
+    if (specialVector.empty())
     {
-      addedSpecial.emplace(conditions_by_name[specialVector[i]].c);
+      ui->requestResponse->clear();
+      ui->requestResponse->setText("Please select an ailment");
+      return;
+    }
+    for (auto it : specialVector)
+    {
+      addedSpecial.emplace(conditions_by_name[it].c);
     }
     count = 0;
     for (auto s : addedSpecial)
@@ -98,19 +98,16 @@ void DoctorWindow::on_requestBed_pressed()
     }
     else
     {
-      ui->requestResponse->setText("The hospital is full, we need to treat more patients first!");
+      ui->requestResponse->setText("The hospital is full!");
     }
-
-}
-
-//Method: on_ailmentSelector_currentIndexChanged
-//Purpose: Callback function to update the ailment that the user has based on what the doctor
-// has selected from the drop down menu
-void DoctorWindow::on_ailmentSelector_currentIndexChanged(int index)
-{
-    ui->requestResponse->clear(); //clear the text box before new request
-    ailment = (index == 0) ? "injury" : (index == 1) ? "burn" : (index == 2) ? "virus" : (index == 3) ? "radiation" :
-              (index == 4) ? "scan" : (index == 5) ? "psychiatric" : (index == 6) ? "respiratory" : (index == 7) ? "cardiac" : "injury";
+    specialVector.clear();
+    ui->injury_checkbox->setChecked(Qt::Unchecked);
+    ui->scan_checkbox->setChecked(Qt::Unchecked);
+    ui->radiation_checkbox->setChecked(Qt::Unchecked);
+    ui->virus_checkbox->setChecked(Qt::Unchecked);
+    ui->respiratory_checkbox->setChecked(Qt::Unchecked);
+    ui->burn_checkbox->setChecked(Qt::Unchecked);
+    ui->cardiac_checkbox->setChecked(Qt::Unchecked);
 }
 
 //Method: on_locationSelector_currentIndexChanged
@@ -160,5 +157,96 @@ void DoctorWindow::addHospital(Hospital & h, web::json::value & bedSpec)
       h.set_id(location);
       (*hospitals)[location] = std::make_tuple(0,h,true);
       break;
+  }
+}
+
+void DoctorWindow::on_injury_checkbox_stateChanged(int arg1)
+{
+  if (arg1 == Qt::Checked)
+  {
+    specialVector.push_back(utility::conversions::to_string_t("injury"));
+  }
+  else
+  {
+    auto end = std::remove_if(specialVector.begin(), specialVector.end(),
+               [](utility::string_t s){return s == utility::conversions::to_string_t("injury");});
+  }
+}
+
+void DoctorWindow::on_burn_checkbox_stateChanged(int arg1)
+{
+  if (arg1 == Qt::Checked)
+  {
+    specialVector.push_back(utility::conversions::to_string_t("burn"));
+  }
+  else
+  {
+    auto end = std::remove_if(specialVector.begin(), specialVector.end(),
+               [](utility::string_t s){return s == utility::conversions::to_string_t("burn");});
+  }
+}
+
+void DoctorWindow::on_virus_checkbox_stateChanged(int arg1)
+{
+  if (arg1 == Qt::Checked)
+  {
+    specialVector.push_back(utility::conversions::to_string_t("virus"));
+  }
+  else
+  {
+    auto end = std::remove_if(specialVector.begin(), specialVector.end(),
+               [](utility::string_t s){return s == utility::conversions::to_string_t("virus");});
+  }
+}
+
+void DoctorWindow::on_radiation_checkbox_stateChanged(int arg1)
+{
+  if (arg1 == Qt::Checked)
+  {
+    specialVector.push_back(utility::conversions::to_string_t("radiation"));
+  }
+  else
+  {
+    auto end = std::remove_if(specialVector.begin(), specialVector.end(),
+               [](utility::string_t s){return s == utility::conversions::to_string_t("radiation");});
+  }
+}
+
+void DoctorWindow::on_scan_checkbox_stateChanged(int arg1)
+{
+  if (arg1 == Qt::Checked)
+  {
+    specialVector.push_back(utility::conversions::to_string_t("scan"));
+  }
+  else
+  {
+    auto end = std::remove_if(specialVector.begin(), specialVector.end(),
+               [](utility::string_t s){return s == utility::conversions::to_string_t("scan");});
+  }
+}
+
+void DoctorWindow::on_respiratory_checkbox_stateChanged(int arg1)
+{
+  if (arg1 == Qt::Checked)
+  {
+    specialVector.push_back(utility::conversions::to_string_t("respiratory"));
+  }
+  else
+  {
+    auto end = std::remove_if(specialVector.begin(), specialVector.end(),
+               [](utility::string_t s){return s == utility::conversions::to_string_t("respiratory");});
+  }
+}
+
+void DoctorWindow::on_cardiac_checkbox_stateChanged(int arg1)
+{
+  if (arg1 == Qt::Checked)
+  {
+    specialVector.push_back(utility::conversions::to_string_t("cardiac"));
+  }
+  else
+  {
+    auto end = std::remove_if(specialVector.begin(), specialVector.end(),
+               [](utility::string_t s){return s == utility::conversions::to_string_t("cardiac");});
   }
 }

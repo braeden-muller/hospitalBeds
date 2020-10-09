@@ -15,7 +15,9 @@ enum condition {
     radiation,
     scan,
     unknown,
-    virus
+    virus,
+    cardiac,
+    respiratory
 };
 
 /*!
@@ -39,6 +41,8 @@ static auto conditions_by_name = []{ // NOLINT(cert-err58-cpp)
     m["radiation"] = (__condition){radiation};
     m["scan"] = (__condition){scan};
     m["virus"] = (__condition){virus};
+    m["cardiac"] = (__condition){cardiac};
+    m["respiratory"] = (__condition){respiratory};
     return m;
 }();
 
