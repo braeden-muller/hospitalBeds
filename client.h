@@ -13,7 +13,7 @@
 using namespace web::http::client;
 
 /*!
- * The client sends requests to retrieve and modify resources 
+ * The client sends requests to retrieve and modify resources
  */
 class Client {
 public:
@@ -23,7 +23,7 @@ public:
      */
     explicit Client();
     ~Client();
-    void sendRequest(std::string command, web::json::value hospital);
+    void sendRequest(std::string command, web::json::value hospital); //sends a request to server
     http_client * client;
 private:
     std::string address;
