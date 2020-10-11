@@ -7,6 +7,7 @@
 #include "hospital.h"
 
 #define NUM_HOSPITALS 5
+#define HANDLE_LENGTH 7
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DoctorWindow; }

@@ -12,7 +12,7 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     QStringList listLocations = (QStringList() << "Christiansburg, VA" << "Roanoke, VA" << "Princeton, WV" << "Lyncburg, VA" << "Bristol, TN");
     ui->locationSelector->addItems(listLocations);
     ui->locationSelector->setCurrentIndex(0); //current location is Christiansburg, VA
-    location = CHRISTIANSBURG;
+    location = CHRISTIANSBURG; //default location is in Christiansburg, VA
 
     doctorClient = new Client(); //Create a client so the doctor can send POST requests via (REST)
     hospitals = new std::vector<std::tuple<std::size_t, Hospital,bool>>(); //vector of hospitals
@@ -59,14 +59,14 @@ void DoctorWindow::on_requestBed_pressed()
                                         utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
                                         utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
 
-    for (auto s = 0; s < 7; ++s)
+    for (auto s = 0; s < HANDLE_LENGTH; ++s)
     {
       addedHandles.emplace(conditions_by_name[handleVector[s]].c);
     }
     int count = 0;
-    for (auto a : addedHandles)
+    for (auto it : addedHandles)
     {
-      bedSpec[handles][count++] = JSTR(name_by_conditions[a]);
+      bedSpec[handles][count++] = JSTR(name_by_conditions[it]);
     }
     std::set<condition> addedSpecial;
     if (specialVector.empty())
@@ -80,9 +80,9 @@ void DoctorWindow::on_requestBed_pressed()
       addedSpecial.emplace(conditions_by_name[it].c);
     }
     count = 0;
-    for (auto s : addedSpecial)
+    for (auto it : addedSpecial)
     {
-      bedSpec[special][count++] = JSTR(name_by_conditions[s]);
+      bedSpec[special][count++] = JSTR(name_by_conditions[it]);
     }
     if (!(std::get<2>((*hospitals)[location])))
     {
@@ -160,6 +160,7 @@ void DoctorWindow::addHospital(Hospital & h, web::json::value & bedSpec)
   }
 }
 
+//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_injury_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -173,6 +174,7 @@ void DoctorWindow::on_injury_checkbox_stateChanged(int arg1)
   }
 }
 
+//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_burn_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -186,6 +188,7 @@ void DoctorWindow::on_burn_checkbox_stateChanged(int arg1)
   }
 }
 
+//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_virus_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -199,6 +202,7 @@ void DoctorWindow::on_virus_checkbox_stateChanged(int arg1)
   }
 }
 
+//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_radiation_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -212,6 +216,7 @@ void DoctorWindow::on_radiation_checkbox_stateChanged(int arg1)
   }
 }
 
+//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_scan_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -225,6 +230,7 @@ void DoctorWindow::on_scan_checkbox_stateChanged(int arg1)
   }
 }
 
+//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_respiratory_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -238,6 +244,7 @@ void DoctorWindow::on_respiratory_checkbox_stateChanged(int arg1)
   }
 }
 
+//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_cardiac_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)

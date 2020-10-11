@@ -31,7 +31,10 @@ pplx::task<http_response> make_task_request(http_client & client,
    return (mtd == methods::GET) ? client.request(mtd,path) : client.request(mtd,path,jvalue);
 }
 
-
+/*!
+ * \brief Used to return the value that was sent back as a repsonse
+ * \from the server
+ */
 void return_response(json::value const & jvalue)
 {
    std::cout << jvalue.serialize() << std::endl;
@@ -65,11 +68,18 @@ void make_request(http_client & client, method mtd, json::value const & jvalue)
       .wait();
 }
 
+//Set up at localhost with port 8080 for proper communication
 Client::Client()
 {
    client = new http_client("http://localhost:8080");
     //Useful video https://www.youtube.com/watch?v=D7fiNQX7P5w
 }
+
+/*!
+ * \brief Sends request to the server in the form of a post (all that is needed for now, GET is used for debug)
+ * \param client command used to determine the type of commmand
+ * \param hospital JSON value to be sent to the server 
+ */
 void Client::sendRequest(std::string command, web::json::value hospital)
 {
    if (command == "POST")
