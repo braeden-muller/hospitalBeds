@@ -15,12 +15,38 @@ void addConditions(std::set<condition> * receptacle, const web::json::value & j_
     }
 }
 
+Bed::Bed() {
+    id = 0;
+    isFull = false;
+    timestamp = 0;
+}
+
 Bed::Bed(web::json::value & spec) {
     id = spec["id"].as_integer();
     isFull = spec["isFull"].as_bool();
     timestamp = spec["timestamp"].as_integer();
     addConditions(&handles, spec["handles"]);
     addConditions(&special, spec["special"]);
+}
+
+void Bed::set_id(int id) {
+  id = id;
+}
+
+void Bed::set_handles(std::set<condition> handles) {
+  handles = handles;
+}
+
+void Bed::set_special(std::set<condition> special) {
+  special = special;
+}
+
+void Bed::set_occupied(bool occupied) {
+  isFull = occupied;
+}
+
+void Bed::set_timestamp(int timestamp) {
+  timestamp = timestamp;
 }
 
 web::json::value Bed::jsonify() {

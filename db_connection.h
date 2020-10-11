@@ -6,6 +6,7 @@
 #include <vector>
 #include <cpprest/http_listener.h>
 #include "sqlite3.h"
+#include "hospital.h"
 
 /*!
  * \brief Singleton database connection abstraction
@@ -15,7 +16,7 @@ private:
     static DBConnection *instance;
     sqlite3 * db;
     std::string testing; // temporary testing string to ensure db receive.
-    std::map<std::string, std::string> hospitals; // Temporary, proof of concept. Replace with database.
+    std::vector<std::tuple<std::size_t, Hospital,bool>> hospitals;
     DBConnection();
   ~DBConnection();
 public:
@@ -24,6 +25,8 @@ public:
      */
     static DBConnection* getInstance();
 
+    std::vector<std::tuple<std::size_t, Hospital,bool>>* getHospitals();
+  
     /*!
      * Frees the memory related to the database connection
      */

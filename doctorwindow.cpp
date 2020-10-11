@@ -15,7 +15,13 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     location = CHRISTIANSBURG;
 
     doctorClient = new Client(); //Create a client so the doctor can send POST requests via (REST)
-    hospitals = new std::vector<std::tuple<std::size_t, Hospital,bool>>(); //vector of hospitals
+
+    //TODO: may move the database access into the client.
+    DBConnection *newDatabase = DBConnection::getInstance();
+    std::string errMsg;
+    newDatabase->importDatabase(errMsg);
+    hospitals = newDatabase->getHospitals();
+    
     Hospital h; //temp hospital that does nothing
     for (int i = 0; i < NUM_HOSPITALS; ++i) //preset to 5 hospitals
     {

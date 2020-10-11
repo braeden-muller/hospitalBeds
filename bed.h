@@ -63,6 +63,12 @@ static auto name_by_conditions = []{ // NOLINT(cert-err58-cpp)
 class Bed {
 public:
     explicit Bed(web::json::value & spec);
+    Bed();
+    void set_id(int id);
+    void set_handles(std::set<condition> handles);
+    void set_special(std::set<condition> special);
+    void set_occupied(bool occupied);
+    void set_timestamp(int timestamp);
     /// Converts this object to json
     web::json::value jsonify();
 private:
