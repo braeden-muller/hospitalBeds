@@ -27,6 +27,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(cpprestsdk REQUIRED)
 find_package(SQLite3 REQUIRED)
+find_package(Qt5 COMPONENTS Charts REQUIRED)
 
 #if(ANDROID)
 #  add_library(hospitalBeds SHARED
@@ -59,6 +60,7 @@ target_link_libraries(hospitalBeds PRIVATE
     ssl
     crypto
     Qt5::Widgets
+    Qt5::Charts
     boost_system
     cpprestsdk::cpprest
     curses

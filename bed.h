@@ -14,10 +14,10 @@ enum condition {
     injury,
     radiation,
     scan,
-    unknown,
     virus,
     cardiac,
-    respiratory
+    respiratory,
+    unknown
 };
 
 /*!
