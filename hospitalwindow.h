@@ -2,6 +2,8 @@
 #define HOSPITALWINDOW_H
 
 #include <QMainWindow>
+#include "client.h"
+#include "hospital.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class HospitalWindow; }
@@ -19,7 +21,13 @@ public:
     explicit HospitalWindow(QWidget *parent = nullptr);
     ~HospitalWindow() override;
 
+private slots:
+    void on_hospital_data_pressed();
+
 private:
     Ui::HospitalWindow *ui;
+    std::vector<Hospital> *hospitals;
+    Client * hospitalClient;
+    void generateBedData(); //TODO: This function will be generating the bed data
 };
 #endif // HOSPITALWINDOW_H
