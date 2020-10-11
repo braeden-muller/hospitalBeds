@@ -1,4 +1,4 @@
-# hospitalBeds
+# Hospital Beds
 
 hospitalBeds is an executable with 3 different operating modes. These modes are as follows:
 
@@ -16,16 +16,20 @@ hospitalBeds is an executable with 3 different operating modes. These modes are 
              each hospital that display the number of occupied beds for each specific hospital. To run this 
              executable type hospitalBeds -h at the command line. 
              
-# required Libraries
+# Required Libraries
   
   - SQLite3 
-    Installation: Linux: sudo apt-get install libsqlite3-dev
+   - Installation: 
+       - Linux: sudo apt-get install libsqlite3-dev
   - Qt5 - QtWidget and QtCharts: 
-    Installation: Linux - Install QtCreator community with widgets and charts
+    - Installation: 
+      - Linux: Install QtCreator community with widgets and charts
   - casablanca for REST SDK 
-    Installation: Linux - https://github.com/Microsoft/cpprestsdk/wiki/How-to-build-for-Linux
+    - Installation: 
+      - Linux: https://github.com/Microsoft/cpprestsdk/wiki/How-to-build-for-Linux
   - lcurses
-    Installation: Linux - sudo apt-get install libncurses5-dev libncursesw5-dev
+    - Installation: 
+      - Linux: sudo apt-get install libncurses5-dev libncursesw5-dev
     
 # Other Details
   
