@@ -13,9 +13,11 @@ HospitalWindow::~HospitalWindow() {
       hospitalClient = nullptr;
 }
 
+//Method will be used to generate the bed data and display on the UI chart 
 void HospitalWindow::generateBedData(void)
 {
-    hospitalClient->sendRequest("POST", JSTR("hospital")); //send request to get a hospital 
+
+    hospitalClient->sendRequest("POST", JSTR("hospital")); //send request to get a hospital (Wait till db is done)
     //Code that will be used to create a QChart
     QChart *chart = new  QChart(); //create chart
     QBarSeries *series = new QBarSeries(); //create series
