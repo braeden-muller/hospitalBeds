@@ -19,7 +19,7 @@ hospitalBeds is an executable with 3 different operating modes. These modes are 
 # Required Libraries
   
   - SQLite3 
-   - Installation: 
+     - Installation: 
        - Linux: sudo apt-get install libsqlite3-dev
   - Qt5 - QtWidget and QtCharts: 
     - Installation: 
