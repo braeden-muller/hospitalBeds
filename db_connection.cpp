@@ -2,7 +2,7 @@
 #include "db_connection.h"
 
 DBConnection::DBConnection() {
-    int error = sqlite3_open("hospitalBeds.db", &db);
+    int error = sqlite3_open("../hospitalBeds.db", &db);
     if (error) {
         sqlite3_close(db);
     }
@@ -153,7 +153,17 @@ int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
           }
           else if(strcmp(columnName[i], "handles") == 0) {
               std::set<condition> handles;
-            
+              std::vector<std::string> result;
+              std::stringstream s_stream(argv[i]);
+              while(s_stream.good()) {
+                std::string substr;
+                  getline(s_stream, substr, ',');
+                  result.push_back(substr);
+              }
+              for (int j = 0; j < result.size(); j++)
+                {
+                    std::cout<< result.at(j)<<std::endl;
+                }
               //TODO: add content of database to handles set.
               //std::cout<<"handles: "<<argv[i]<<std::endl;
               //b.set_handles(argv[i]);

@@ -5,6 +5,8 @@
 #include <map>
 #include <vector>
 #include <cpprest/http_listener.h>
+#include <sstream>
+
 #include "sqlite3.h"
 #include "hospital.h"
 

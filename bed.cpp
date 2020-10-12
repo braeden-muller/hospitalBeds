@@ -30,23 +30,23 @@ Bed::Bed(web::json::value & spec) {
 }
 
 void Bed::set_id(int id) {
-  id = id;
+    id = id;
 }
 
 void Bed::set_handles(std::set<condition> handles) {
-  handles = handles;
+    handles = handles;
 }
 
 void Bed::set_special(std::set<condition> special) {
-  special = special;
+    special = special;
 }
 
 void Bed::set_occupied(bool occupied) {
-  isFull = occupied;
+    isFull = occupied;
 }
 
 void Bed::set_timestamp(int timestamp) {
-  timestamp = timestamp;
+    timestamp = timestamp;
 }
 
 web::json::value Bed::jsonify() {
