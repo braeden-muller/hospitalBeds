@@ -1,6 +1,7 @@
 #include "server.h"
 #include "bed.h"
 #include "hospital.h"
+#include "query.h"
 #include <iostream>
 #include <cpprest/http_listener.h>
 
@@ -41,6 +42,20 @@ using std::endl;
     ]
 }
 */
+/* SAMPLE DELETE REQUEST
+ * localhost:8080/hospital?name=general_hospital
+ */
+
+void handle_delete(const http_request& request) {
+    cout << "Received DELETE request" << endl;
+    Query q(request.request_uri().query());
+
+    std::string msgs;
+    if(DBConnection::getInstance()->unregisterHospital(q["name"], msgs))
+        request.reply(status_codes::OK, msgs);
+    else
+        request.reply(status_codes::BadRequest, msgs);
+}
 
 /*!
  * \brief Handles an HTTP POST request
@@ -89,6 +104,7 @@ Server::Server(const std::string & addr) {
     // Begin listening at the specified address and register the two helper functions
     http_listener listener(address);
     listener.support(methods::POST, handle_post);
+    listener.support(methods::DEL, handle_delete);
 
     try {
         // Spawns a new listening thread
