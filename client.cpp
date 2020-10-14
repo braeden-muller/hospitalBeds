@@ -2,8 +2,6 @@
 #include <iostream>
 #include <cpprest/http_listener.h>
 
-#define JSTR json::value::string
-
 using namespace web;
 using namespace web::http;
 using namespace web::http::client;
@@ -23,8 +21,7 @@ using std::endl;
  * \param jvalue The json value that can be sent to the console
  */
 pplx::task<http_response> make_task_request(http_client & client,
-
-                                            method mtd,
+                                            const method& mtd,
                                             json::value const & jvalue)
 {
    auto path = utility::conversions::to_string_t("/hospital");
@@ -46,15 +43,15 @@ void return_response(json::value const & jvalue)
  * \param mtd Used to determine if the method is safe or not (specifically if it is GET)
  * \param jvalue The json value that can be sent to the console
  */
-void make_request(http_client & client, method mtd, json::value const & jvalue)
+void make_request(http_client & client, const method& mtd, json::value const & jvalue)
 {
    make_task_request(client, mtd, jvalue)
-      .then([](http_response response)
+      .then([](const http_response& response)
       {
          return (response.status_code() == status_codes::OK) ?
              response.extract_json() : pplx::task_from_result(json::value());
       })
-      .then([](pplx::task<json::value> feedback)
+      .then([](const pplx::task<json::value>& feedback)
       {
          try
          {
@@ -80,7 +77,7 @@ Client::Client()
  * \param client command used to determine the type of commmand
  * \param hospital JSON value to be sent to the server 
  */
-void Client::sendRequest(std::string command, web::json::value hospital)
+void Client::sendRequest(const std::string& command, const web::json::value& hospital)
 {
    if (command == "POST")
    {
@@ -92,5 +89,4 @@ void Client::sendRequest(std::string command, web::json::value hospital)
    }
 }
 
-Client::~Client() {
-}
+Client::~Client() = default;

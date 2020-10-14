@@ -23,7 +23,7 @@ public:
      */
     explicit Client();
     ~Client();
-    void sendRequest(std::string command, web::json::value hospital); //sends a request to server
+    void sendRequest(const std::string& command, const web::json::value& hospital); //sends a request to server
     http_client * client;
 private:
     std::string address;

@@ -176,7 +176,7 @@ int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
               //b.set_handles(argv[i]);
           }
           else if(strcmp(columnName[i], "occupied") == 0) {
-              b.set_occupied(argv[i]);
+              b.set_full(argv[i]);
               std::cout<<"occupied: "<<argv[i]<<std::endl;
           }
           else if(strcmp(columnName[i], "timestamp") == 0) {

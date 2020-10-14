@@ -16,52 +16,52 @@ void addConditions(std::set<condition> * receptacle, const web::json::value & j_
 }
 
 Bed::Bed() {
-    id = 0;
-    isFull = false;
-    timestamp = 0;
+    _id = 0;
+    _isFull = false;
+    _timestamp = 0;
 }
 
 Bed::Bed(web::json::value & spec) {
-    id = spec["id"].as_integer();
-    isFull = spec["isFull"].as_bool();
-    timestamp = spec["timestamp"].as_integer();
-    addConditions(&handles, spec["handles"]);
-    addConditions(&special, spec["special"]);
+    _id = spec["id"].as_integer();
+    _isFull = spec["isFull"].as_bool();
+    _timestamp = spec["timestamp"].as_integer();
+    addConditions(&_handles, spec["handles"]);
+    addConditions(&_special, spec["special"]);
 }
 
 void Bed::set_id(int id) {
-    id = id;
+    _id = id;
 }
 
-void Bed::set_handles(std::set<condition> handles) {
-    handles = handles;
+void Bed::set_handles(const std::set<condition> & handles) {
+    _handles = handles;
 }
 
-void Bed::set_special(std::set<condition> special) {
-    special = special;
+void Bed::set_special(const std::set<condition> & special) {
+    _special = special;
 }
 
-void Bed::set_occupied(bool occupied) {
-    isFull = occupied;
+void Bed::set_full(bool isFull) {
+    _isFull = isFull;
 }
 
 void Bed::set_timestamp(int timestamp) {
-    timestamp = timestamp;
+    _timestamp = timestamp;
 }
 
 web::json::value Bed::jsonify() {
     web::json::value j_bed;
-    j_bed["id"] = id;
-    j_bed["timestamp"] = timestamp;
-    j_bed["isFull"] = JBOOL(isFull);
+    j_bed["id"] = _id;
+    j_bed["timestamp"] = _timestamp;
+    j_bed["isFull"] = JBOOL(_isFull);
 
     int i = 0;
-    for (const auto & handle : handles) {
+    for (const auto & handle : _handles) {
         j_bed["handles"][i++] = JSTR(name_by_conditions[handle]);
     }
 
     i = 0;
-    for (const auto & spec : special) {
+    for (const auto & spec : _special) {
         j_bed["special"][i++] = JSTR(name_by_conditions[spec]);
     }
 

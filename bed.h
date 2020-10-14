@@ -65,18 +65,18 @@ public:
     explicit Bed(web::json::value & spec);
     Bed();
     void set_id(int id);
-    void set_handles(std::set<condition> handles);
-    void set_special(std::set<condition> special);
-    void set_occupied(bool occupied);
+    void set_handles(const std::set<condition> & handles);
+    void set_special(const std::set<condition> & special);
+    void set_full(bool isFull);
     void set_timestamp(int timestamp);
     /// Converts this object to json
     web::json::value jsonify();
 private:
-    int id;
-    bool isFull;
-    int timestamp; // Remember to turn your computer off before 3:14 AM on January 19th 2038
-    std::set<condition> handles;
-    std::set<condition> special;
+    int _id;
+    bool _isFull;
+    int _timestamp; // Remember to turn your computer off before 3:14 AM on January 19th 2038
+    std::set<condition> _handles;
+    std::set<condition> _special;
 };
 
 #endif //HOSPITALBEDS_BED_H

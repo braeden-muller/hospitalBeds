@@ -23,13 +23,13 @@ bool Hospital::add_bed(const Bed& bed) {
 
 //max beds were researched and found from each hospital website
 //(links to source are included in ReadMe.md)
-void Hospital::set_max_beds(void)
-{
-  max_beds = (_name.find("New River") != std::string::npos) ? 110 :
-             (_name.find("Roanoke") != std::string::npos) ? 703 :
-             (_name.find("Princeton") != std::string::npos) ? 267 :
-             (_name.find("Lynchburg") != std::string::npos) ? 358 :
-             (_name.find("Bristol") != std::string::npos) ? 269 : 0;
+void Hospital::set_max_beds() {
+    // TODO: Don't hardcode these
+    max_beds = (_name.find("New River") != std::string::npos) ? 110 :
+               (_name.find("Roanoke") != std::string::npos) ? 703 :
+               (_name.find("Princeton") != std::string::npos) ? 267 :
+               (_name.find("Lynchburg") != std::string::npos) ? 358 :
+               (_name.find("Bristol") != std::string::npos) ? 269 : 0;
 }
 
 web::json::value Hospital::jsonify() {
