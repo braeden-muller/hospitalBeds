@@ -11,13 +11,18 @@ HospitalWindow::~HospitalWindow() {
     delete hospitalClient;
     if (hospitalClient != nullptr)
       hospitalClient = nullptr;
+    DBConnection::shutdown();
 }
 
-//Method will be used to generate the bed data and display on the UI chart 
+//Method will be used to generate the bed data and display on the UI chart
 void HospitalWindow::generateBedData(void)
 {
+    //auto db = DBConnection::getInstance();
 
-    hospitalClient->sendRequest("POST", JSTR("hospital")); //send request to get a hospital (Wait till db is done)
+    //auto hospitals = db->getHospitals();
+    std::cout << "I got some of the patient data" << std::endl
+              << "The hospital size is: " << DBConnection::getInstance()->getHospitals()->size() << std::endl;
+
     //Code that will be used to create a QChart
     QChart *chart = new  QChart(); //create chart
     QBarSeries *series = new QBarSeries(); //create series

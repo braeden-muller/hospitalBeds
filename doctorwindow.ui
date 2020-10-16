@@ -53,7 +53,7 @@
      </rect>
     </property>
     <property name="editable">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QWidget" name="verticalLayoutWidget">
@@ -62,7 +62,7 @@
       <x>150</x>
       <y>160</y>
       <width>160</width>
-      <height>157</height>
+      <height>199</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -156,7 +156,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -165,4 +165,3 @@
  <resources/>
  <connections/>
 </ui>
-

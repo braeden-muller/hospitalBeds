@@ -26,6 +26,7 @@ private slots:
 
 private:
     Ui::HospitalWindow *ui;
+    //DBConnection * db;
     std::vector<Hospital> *hospitals;
     Client * hospitalClient;
     void generateBedData(); //TODO: This function will be generating the bed data
