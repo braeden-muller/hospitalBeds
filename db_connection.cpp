@@ -1,6 +1,8 @@
 #include <chrono>
 #include "db_connection.h"
 
+extern void addConditions(std::set<condition> * receptacle, const web::json::value & j_conditions);
+
 DBConnection::DBConnection() {
     int error = sqlite3_open("../hospitalBeds.db", &db);
     if (error) {
@@ -38,14 +40,21 @@ bool DBConnection::registerHospital(const std::string &name, std::string &msgs) 
         msgs = "No hospital name specified";
         return false;
     }
-    // if (hospitals.count(name) > 0) {
-    //     msgs = "Hospital already exists";
-    //     return false;
-    // }
+    for(int i=0; i < hospitals.size(); i++)
+    {
+        if (std::get<1>(hospitals[i]).get_name() == name) {
+            msgs = "Hospital already exists";
+            return false;
+        }
+    }
+    
 
     // Add hospital
     auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     //hospitals.emplace(name, std::ctime(&now));
+    Hospital newHospital;
+    newHospital.set_name(name);
+    hospitals.push_back(std::make_tuple(size_t(hospitals.size()), newHospital, true));
     msgs = "Successfully added hospital";
     return true;
 }
@@ -155,11 +164,15 @@ int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
               std::set<condition> handles;
               std::vector<std::string> result;
               std::stringstream s_stream(argv[i]);
+              std::vector<utility::string_t> handleVec;
               while(s_stream.good()) {
                 std::string substr;
                   getline(s_stream, substr, ',');
+                  //handleVec.push_back(utility::conversions::to_string_t(substr);
                   result.push_back(substr);
               }
+              //addConditions(&handles, utility::conversions::to_string_t(argv[i]));
+              
               for (int j = 0; j < result.size(); j++)
                 {
                     std::cout<< result.at(j)<<std::endl;

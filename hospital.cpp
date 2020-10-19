@@ -21,6 +21,10 @@ bool Hospital::add_bed(const Bed& bed) {
     return ok;
 }
 
+std::string Hospital::get_name() {
+  return _name;
+}
+
 //max beds were researched and found from each hospital website
 //(links to source are included in ReadMe.md)
 void Hospital::set_max_beds() {

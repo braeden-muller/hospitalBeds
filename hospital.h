@@ -16,6 +16,8 @@ public:
     void set_location(double lat, double lon);
     void set_id(int id);
     bool add_bed(const Bed& bed);
+
+    std::string get_name();
     /// Converts this object to json
     web::json::value jsonify();
 private:
