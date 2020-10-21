@@ -70,6 +70,7 @@ public:
     void set_full(bool isFull);
     void set_timestamp(int timestamp);
     /// Converts this object to json
+    int get_id();
     web::json::value jsonify();
 private:
     int _id;
