@@ -49,6 +49,10 @@ void Bed::set_timestamp(int timestamp) {
     _timestamp = timestamp;
 }
 
+int Bed::get_id() {
+    return _id;
+}
+
 web::json::value Bed::jsonify() {
     web::json::value j_bed;
     j_bed["id"] = _id;

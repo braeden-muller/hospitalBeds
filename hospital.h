@@ -18,6 +18,8 @@ public:
     bool add_bed(const Bed& bed);
 
     std::string get_name();
+    Bed get_bed(int index);
+    size_t get_size();
     /// Converts this object to json
     web::json::value jsonify();
 private:

@@ -36,6 +36,15 @@ void Hospital::set_max_beds() {
                (_name.find("Bristol") != std::string::npos) ? 269 : 0;
 }
 
+Bed Hospital::get_bed(int index) {
+  // bounds checking is handled within updateDatabase
+  return beds[index];
+}
+
+size_t Hospital::get_size() {
+  return beds.size();
+}
+
 web::json::value Hospital::jsonify() {
     web::json::value j_hospital;
     j_hospital["hospital"] = JSTR(_name);
