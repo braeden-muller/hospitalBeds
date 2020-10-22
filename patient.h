@@ -1,5 +1,5 @@
-#ifndef HOSPITALBEDS_PLAYER_H
-#define HOSPITALBEDS_PLAYER_H
+#ifndef HOSPITALBEDS_PATIENT_H
+#define HOSPITALBEDS_PATIENT_H
 
 #include <set>
 #include <string>
@@ -9,7 +9,7 @@
 
 
 /*!
- * This represents all the data associated with a single bed in a hospital
+ * This represents all the features contained in an individual patient
  */
 class Patient {
 public:
@@ -19,7 +19,6 @@ public:
     void set_ailments(const std::set<condition> & ailments);
     void set_location(const double latitude, const double longitude);
     void set_treated(const bool treated);
-    /// Converts this object to json
     web::json::value jsonify();
 private:
     int _id;
@@ -28,4 +27,4 @@ private:
     bool _treated;
 };
 
-#endif //HOSPITALBEDS_BED_H
+#endif //HOSPITALBEDS_PATIENT_H
