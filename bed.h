@@ -70,8 +70,10 @@ public:
     void set_full(bool isFull);
     void set_timestamp(int timestamp);
     /// Converts this object to json
-    int get_id();
+    int get_id() const;
     web::json::value jsonify();
+
+    friend bool operator<(const Bed& l, const Bed& r);
 private:
     int _id;
     bool _isFull;

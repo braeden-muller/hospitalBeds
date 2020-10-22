@@ -46,6 +46,10 @@ using std::endl;
  * localhost:8080/hospital?name=general_hospital
  */
 
+/*!
+ * \brief Handles an HTTP DELETE request
+ * \param request Request to handle
+ */
 void handle_delete(const http_request& request) {
     cout << "Received DELETE request" << endl;
     Query q(request.request_uri().query());
@@ -62,11 +66,13 @@ void handle_delete(const http_request& request) {
  * \param request Request to handle
  */
 void handle_post(const http_request& request) {
+    static std::map<std::string, Hospital> hospitals;
+
     cout << "Received POST request" << endl;
 
     // Relevant request data
-
     Hospital hospital;
+    Hospital oldHospital;
 
     // This server expects all POST requests to have a purely JSON body
     // Attempt to get the JSON in the body, will fail if the body is not JSON
@@ -86,16 +92,16 @@ void handle_post(const http_request& request) {
         for (auto & j_bed : j_beds) {
             hospital.add_bed(Bed(j_bed));
         }
+
+        oldHospital = hospitals[hospital.get_name()];
+        hospitals[hospital.get_name()].update(hospital);
     }
     catch (const std::exception & e) {
         cout << e.what() << endl;
     }
 
-    // Form a reply to give back to the client
-    //auto reply = body; // DEBUG for now this just mirrors the client request
-
     // Send off the assembled reply back to the client
-    request.reply(status_codes::OK, hospital.jsonify());
+    request.reply(status_codes::OK, oldHospital.jsonify());
 }
 
 Server::Server(const std::string & addr) {

@@ -49,7 +49,7 @@ void Bed::set_timestamp(int timestamp) {
     _timestamp = timestamp;
 }
 
-int Bed::get_id() {
+int Bed::get_id() const {
     return _id;
 }
 
@@ -70,4 +70,8 @@ web::json::value Bed::jsonify() {
     }
 
     return j_bed;
+}
+
+bool operator<(const Bed& l, const Bed& r) {
+    return l._timestamp < r._timestamp;
 }
