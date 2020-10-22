@@ -52,8 +52,9 @@ find_package(Qt5 COMPONENTS Charts REQUIRED)
     bed.cpp            bed.h
     hospital.cpp       hospital.h
     sqlite3.c          sqlite3.h
-                       json_def.h
+    patient.cpp        json_def.h
                        query.h
+                       patient.h
   )
 #endif()
 
