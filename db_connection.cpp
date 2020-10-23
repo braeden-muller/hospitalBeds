@@ -1,7 +1,6 @@
 #include <chrono>
 #include "db_connection.h"
 
-extern void addConditions(std::set<condition> * receptacle, const web::json::value & j_conditions);
 
 DBConnection::DBConnection() {
     int error = sqlite3_open("../hospitalBeds.db", &db);

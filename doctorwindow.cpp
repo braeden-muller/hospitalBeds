@@ -37,7 +37,7 @@ void DoctorWindow::on_requestBed_pressed()
 {
     Patient p;
     p.set_location(latitude, longitude); //add the players latitude and longitude
-    p.set_id(patientId++);
+    //p.set_id(patientId++);
     auto patientSpec = web::json::value::object();
     utility::string_t ailments = utility::conversions::to_string_t("ailments");
     std::set<condition> addedAilments;
