@@ -1,6 +1,14 @@
 #include "doctorwindow.h"
 #include "./ui_doctorwindow.h"
 #include <typeinfo>
+#include <iostream>
+
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/random_generator.hpp>
+#include <boost/lexical_cast.hpp>
+
+using namespace boost::uuids;
 
 //Method: Constructor
 //Purpose: This is the default for the Doctor Window it is responsible for setting all added widgets
@@ -35,9 +43,11 @@ DoctorWindow::~DoctorWindow() {
 // to the hospital, if not it registers a new hospital within the database.
 void DoctorWindow::on_requestBed_pressed()
 {
+    random_generator gen;
+    std::string playerId = boost::lexical_cast<std::string>(gen());
     Patient p;
     p.set_location(latitude, longitude); //add the players latitude and longitude
-    p.set_id(patientId++);
+    p.set_id(playerId);
     auto patientSpec = web::json::value::object();
     utility::string_t ailments = utility::conversions::to_string_t("ailments");
     std::set<condition> addedAilments;
