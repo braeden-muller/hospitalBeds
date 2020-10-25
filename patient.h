@@ -19,6 +19,11 @@ public:
     void set_ailments(const std::set<condition> & ailments);
     void set_location(double latitude, double longitude);
     void set_treated(bool treated);
+    
+    std::pair<double,double> get_location(void) const;
+    bool is_treated() const;
+    std::set<condition> get_ailments() const;
+    std::string get_id() const;
     web::json::value jsonify();
 private:
     std::string _id;

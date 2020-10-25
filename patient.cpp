@@ -55,8 +55,8 @@ std::string Patient::get_id(void) const{
 
 web::json::value Patient::jsonify() {
     web::json::value j_patient;
-    j_patient["id"] = JSTR(_id);
-
+    web::json::value j_data;
+    j_data["id"] = JSTR(_id); 
     int i = 0;
     for (const auto & a : _ailments) {
         j_data["ailments"][i++] = JSTR(name_by_conditions[a]);
