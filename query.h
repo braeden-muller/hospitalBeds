@@ -24,6 +24,12 @@ public:
             getline(spair, second);
             params.emplace(first, second);
         }
+
+        std::cout << "    Received: " << q_string << std::endl;
+    }
+
+    bool has_key(const std::string& key) {
+        return params.find(key) != params.end();
     }
 
     std::string operator[](const std::string & key) {

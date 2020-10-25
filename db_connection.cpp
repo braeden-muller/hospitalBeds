@@ -1,7 +1,6 @@
 #include <chrono>
 #include "db_connection.h"
 
-extern void addConditions(std::set<condition> * receptacle, const web::json::value & j_conditions);
 
 DBConnection::DBConnection() {
     int error = sqlite3_open("../hospitalBeds.db", &db);
@@ -124,8 +123,7 @@ bool DBConnection::importDatabase(std::string & msgs) {
         msgs.append("could not open bed table");
         sqlite3_close(db);
         return false;
-    }
-    
+    }    
     return true;
 }
 
@@ -208,4 +206,25 @@ int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
 
     }
     return 0;
+}
+
+bool DBConnection::updateDatabase(Hospital h, std::string & msgs) {
+    //iterate through hospital beds and find which beds need to be updated
+    std::cout<<"in update"<<std::endl;
+    int error = 0;
+    char *zerrMsg = 0;
+    std::stringstream updateStream;
+    for (int i=0; i < h.get_size(); i++)
+    {
+        int bedID = h.get_bed(i).get_id();
+        updateStream<<"UPDATE bed SET occupied = 1 WHERE ID="<<bedID;
+        error |= sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
+        updateStream.clear();
+    }
+    if (error) {
+        msgs.append("could not open update bed table");
+        sqlite3_close(db);
+        return false;
+    }
+    return true;
 }

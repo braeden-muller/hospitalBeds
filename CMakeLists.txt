@@ -55,6 +55,7 @@ find_package(Qt5 COMPONENTS Charts REQUIRED)
     patient.cpp        json_def.h
                        query.h
                        patient.h
+                       conditions.h
   )
 #endif()
 
@@ -67,4 +68,5 @@ target_link_libraries(hospitalBeds PRIVATE
     cpprestsdk::cpprest
     curses
     sqlite3
+    uuid
   )

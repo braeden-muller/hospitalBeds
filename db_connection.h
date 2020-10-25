@@ -74,6 +74,15 @@ public:
      * \return true if successful, false otherwise
      */
     int databaseCallback(int argc, char **argv, char **columnName);
+
+
+      /*!
+     * \brief Updates the database
+     * \param index, the index to update
+     * \param msgs Messages to be returned (e.g. Specific error or success message)
+     * \return true if successful, false otherwise
+     */
+  bool updateDatabase(Hospital h, std::string & msgs);
 };
 
     /*!

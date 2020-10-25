@@ -1,14 +1,27 @@
+#include <uuid/uuid.h>
 #include "patient.h"
+#include "conditions.h"
+
+std::string makeUUID() {
+    uuid_t id;
+    uuid_generate(id);
+    std::string __id(reinterpret_cast<const char *>(id));
+    return __id;
+}
+
+Patient::Patient(web::json::value & spec) {
+    _id = spec["id"].as_string();
+    addConditions(&_ailments, spec["ailments"]);
+    location.first = spec["location"][0].as_double();
+    location.second = spec["location"][1].as_double();
+    _treated = spec["isTreated"].as_bool();
+}
 
 Patient::Patient() {
-    _id = "-1";
+    _id = makeUUID();
     location.first = 37.0;
     location.second = -79.0;
     _treated = false;
-}
-
-void Patient::set_id(std::string id) {
-    _id = id;
 }
 
 void Patient::set_ailments(const std::set<condition> & ailments) {
@@ -42,8 +55,12 @@ std::string Patient::get_id(void) const{
 
 web::json::value Patient::jsonify() {
     web::json::value j_patient;
+<<<<<<< HEAD
     web::json::value j_data;
     j_data["id"] = JSTR(_id);
+=======
+    j_patient["id"] = JSTR(_id);
+>>>>>>> d3c8c92dcbfb5e1a1e77e8f618726bb68dc8adc7
 
     int i = 0;
     for (const auto & a : _ailments) {
@@ -55,4 +72,8 @@ web::json::value Patient::jsonify() {
     j_patient["patient"] = j_data;
 
     return j_patient;
+}
+
+std::string Patient::get_id() {
+    return _id;
 }
