@@ -94,15 +94,6 @@ void Hospital::update(const Hospital & other) {
     }
 }
 
-Bed Hospital::get_bed(int index) {
-  // bounds checking is handled within updateDatabase
-  return beds[index];
-}
-
-size_t Hospital::get_size() {
-  return beds.size();
-}
-
 web::json::value Hospital::jsonify() {
     web::json::value j_hospital;
     j_hospital["hospital"] = JSTR(_name);
