@@ -130,76 +130,71 @@ bool DBConnection::importDatabase(std::string & msgs) {
 int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
     Hospital h;
     Bed b;
+    int pID = 0;
     for (int i = 0; i < argc; i++) {
       //printf("%d: , %s = %s\n", i, columnName[i], argv[i] ? argv[i] : "NULL");
       if((strcmp(columnName[1], "name") == 0)) {
           if(strcmp(columnName[i], "ID") == 0) {
               h.set_id(atoi(argv[i]));
-              std::cout<<"id: "<<argv[i]<<std::endl;
           }
           else if(strcmp(columnName[i], "name") == 0) {
               h.set_name(argv[i]);
-              std::cout<<"name: "<<argv[i]<<std::endl;
           }
           else if(strcmp(columnName[i], "location") == 0) {
-
-              //TODO: change database contents so that they are in lat, lon
-              //h.set_locatione(argv[i]);
-              std::cout<<"loc: "<<argv[i]<<std::endl;
-          }
-          // this adds the hospital to the overarching hospitalVector
-          if(i%4 == 0) {
+              std::stringstream s_stream(argv[i]);
+              std::string latString, lonString;
+              getline(s_stream, latString, ',');
+              getline(s_stream, lonString);
+              h.set_location(atof(latString.c_str()), atof(lonString.c_str()));
               hospitals.push_back(std::make_tuple(0,h,false));
-              std::cout<<"hospital added to hospital vector"<<std::endl;
           }
       }
       else if((strcmp(columnName[1], "parentHospitalID") == 0)) {
           if(strcmp(columnName[i], "ID") == 0) {
               b.set_id(atoi(argv[i]));
-              std::cout<<"bed id: "<<argv[i]<<std::endl;
+          }
+          else if(strcmp(columnName[i], "parentHospitalID") == 0) {
+            pID = atoi(argv[i]);
           }
           else if(strcmp(columnName[i], "handles") == 0) {
               std::set<condition> handles;
-              std::vector<std::string> result;
               std::stringstream s_stream(argv[i]);
               std::vector<utility::string_t> handleVec;
               while(s_stream.good()) {
-                std::string substr;
+                  std::string substr;
                   getline(s_stream, substr, ',');
-                  //handleVec.push_back(utility::conversions::to_string_t(substr);
-                  result.push_back(substr);
+                  handleVec.push_back(utility::conversions::to_string_t(substr));
               }
-              //addConditions(&handles, utility::conversions::to_string_t(argv[i]));
               
-              for (int j = 0; j < result.size(); j++)
-                {
-                    std::cout<< result.at(j)<<std::endl;
-                }
-              //TODO: add content of database to handles set.
-              //std::cout<<"handles: "<<argv[i]<<std::endl;
-              //b.set_handles(argv[i]);
+              for (auto it : handleVec) {
+                  handles.emplace(conditions_by_name[it].c);
+              }
+                  
+              b.set_handles(handles);
           }
           else if(strcmp(columnName[i], "special") == 0) {
-              std::set<condition> special;
-            
-              //TODO: add content of database to handles set.
-              //std::cout<<"handles: "<<argv[i]<<std::endl;
-              //b.set_handles(argv[i]);
+              std::set<condition> specialties;
+              std::stringstream s_stream(argv[i]);
+              std::vector<utility::string_t> specialVec;
+              while(s_stream.good()) {
+                  std::string substr;
+                  getline(s_stream, substr, ',');
+                  specialVec.push_back(utility::conversions::to_string_t(substr));
+              }
+              
+              for (auto it : specialVec) {
+                  specialties.emplace(conditions_by_name[it].c);
+              }
+                  
+              b.set_special(specialties);
           }
           else if(strcmp(columnName[i], "occupied") == 0) {
               b.set_full(argv[i]);
-              std::cout<<"occupied: "<<argv[i]<<std::endl;
           }
           else if(strcmp(columnName[i], "timestamp") == 0) {
               b.set_timestamp(atoi(argv[i]));
-              std::cout<<"timestamp: "<<argv[i]<<std::endl;
-          }
-          //TODO: add error checking for position
-          if(i%6 == 0) {
-            std::get<1>(hospitals[0]).add_bed(b);
-              //std::get<1>(hospitalTuple);
-              
-              std::cout<<"bed added to hospital vector"<<std::endl;
+              // adds the bed to the hospital.
+              std::get<1>(hospitals[0]).add_bed(b);
           }
       }
           //std::cout<<columnName[i]<<": "<<argv[i]<<std::endl;
