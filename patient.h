@@ -19,16 +19,19 @@ public:
     void set_ailments(const std::set<condition> & ailments);
     void set_location(double latitude, double longitude);
     void set_treated(bool treated);
-    
+    void set_assigned_hospital(std::string name);
+
     std::pair<double,double> get_location(void) const;
     bool is_treated() const;
     std::set<condition> get_ailments() const;
     std::string get_id() const;
+    std::string get_assigned_hospital() const;
     web::json::value jsonify();
 private:
     std::string _id;
     std::set<condition> _ailments;
     std::pair<double, double> location;
+    std::string _assignedHospital;
     bool _treated;
 };
 
