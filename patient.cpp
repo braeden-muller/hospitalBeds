@@ -35,32 +35,32 @@ void Patient::set_location(const double latitude, const double longitude) {
     location.second = longitude;
 }
 
-void Patient::set_treated(const bool treated){
-  _treated = treated;
+void Patient::set_treated(const bool treated) {
+    _treated = treated;
 }
 
-void Patient::set_assigned_hospital(const std::string name){
-  _assignedHospital = name;
+void Patient::set_assigned_hospital(const std::string& name) {
+    _assignedHospital = name;
 }
 
-std::pair<double,double> Patient::get_location(void) const{
-  return location;
+std::pair<double,double> Patient::get_location() const {
+    return location;
 }
 
-bool Patient::is_treated(void) const{
-  return _treated;
+bool Patient::is_treated() const {
+    return _treated;
 }
 
-std::set<condition> Patient::get_ailments(void) const{
-  return _ailments;
+std::set<condition> Patient::get_ailments() const {
+    return _ailments;
 }
 
-std::string Patient::get_id(void) const{
-  return _id;
+std::string Patient::get_id() const {
+    return _id;
 }
 
-std::string Patient::get_assigned_hospital() const{
-  return _assignedHospital;
+std::string Patient::get_assigned_hospital() const {
+    return _assignedHospital;
 }
 
 web::json::value Patient::jsonify() {

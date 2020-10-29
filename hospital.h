@@ -5,6 +5,7 @@
 #include <vector>
 #include "bed.h"
 #include "json_def.h"
+#include "patient.h"
 
 /*!
  * This represents all the data associated with a single hospital
@@ -22,8 +23,10 @@ public:
     void set_id(int id);
     size_t get_size() const;
 
+    void remove_patient(const std::string& id);
+
     bool add_bed(const Bed& bed);
-    void update(const Hospital & other);
+    void update(const Hospital & other, std::vector<Patient>& accepted, std::vector<Patient>& declined);
     bool isMetaAltered() const;
 
     Bed get_bed(int index) const;
@@ -35,6 +38,7 @@ private:
     std::string _name;
     std::pair<double, double> location;
     std::vector<Bed> beds;
+    std::vector<Patient> patientQueue;
     int _id = -1;
 
     bool metaAltered = false;

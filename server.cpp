@@ -79,6 +79,10 @@ localhost:8080/hospital?patient=c46f590e-e37f-4788-a784-a303412e7a99
 static std::map<std::string, Hospital> hospitals;
 static std::map<std::string, Patient> patients;
 
+void routePatient(const Patient& patient) {
+    //TODO
+}
+
 /*!
  * \brief Handles an HTTP DELETE request
  * \param request Request to handle
@@ -156,8 +160,21 @@ void handle_post(const http_request& request) {
                 hospital.add_bed(Bed(j_bed));
             }
 
+            std::vector<Patient> accepted;
+            std::vector<Patient> declined;
+
             oldHospital = hospitals[hospital.get_name()];
-            hospitals[hospital.get_name()].update(hospital);
+            hospitals[hospital.get_name()].update(hospital, accepted, declined);
+
+            for (auto & aPatient : accepted) {
+                aPatient.set_treated(true);
+                patients[aPatient.get_id()] = aPatient;
+            }
+
+            for (auto & dPatient : declined) {
+                patients[dPatient.get_id()] = dPatient;
+                routePatient(dPatient);
+            }
 
             // Send off the assembled reply back to the client
             request.reply(status_codes::OK, oldHospital.jsonify());

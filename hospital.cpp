@@ -55,9 +55,29 @@ size_t Hospital::get_size() const {
   return beds.size();
 }
 
-void Hospital::update(const Hospital & other) {
+void Hospital::update(const Hospital & other, std::vector<Patient>& accepted, std::vector<Patient>& declined) {
     // Make a delta hospital that only contains altered and meta information
     Hospital delta(other.get_name(), other.get_location(), other.get_id());
+
+    this->patientQueue.clear();
+
+    // Keep track of whether the patient was accepted or declined
+    for (int i = 0; i < other.patientQueue.size(); i++) {
+        // If the patient was declined, sort it into declined
+        if (patientQueue[i].get_assigned_hospital() == "Declined") {
+            Patient thisPatient = patientQueue[i];
+            thisPatient.set_assigned_hospital("None");
+            declined.push_back(thisPatient);
+        }
+        // If no action, keep hold of it
+        else if (patientQueue[i].get_assigned_hospital() == "None") {
+            this->patientQueue.push_back(patientQueue[i]);
+        }
+        // If there is a hospital name, sort it into accepted
+        else {
+            accepted.push_back(patientQueue[i]);
+        }
+    }
 
     // Since delta always contains all meta information, add a flag if the meta information has changed
     delta.metaAltered = delta.get_location() != this->get_location();
@@ -104,9 +124,20 @@ web::json::value Hospital::jsonify() {
         j_hospital["beds"][i] = beds[i].jsonify();
     }
 
+    for (int i = 0; i < patientQueue.size(); i++) {
+        j_hospital["patientQueue"][i] = patientQueue[i].jsonify();
+    }
+
     return j_hospital;
 }
 
 bool Hospital::isMetaAltered() const {
     return metaAltered;
+}
+
+void Hospital::remove_patient(const std::string &id) {
+    for (auto it = patientQueue.begin(); it < patientQueue.end(); it++) {
+        if (it->get_id() == id)
+            patientQueue.erase(it);
+    }
 }
