@@ -57,5 +57,8 @@ private:
     double longitude;
     std::size_t patientId;
     std::vector<utility::string_t> ailmentVector;
+    std::vector<std::pair<std::string, Patient>> * patients;
+
+    void clear_checkboxes(void);
 };
 #endif // DOCTORWINDOW_H

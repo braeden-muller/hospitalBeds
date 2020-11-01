@@ -23,7 +23,7 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     ui->longitudeLineEdit->setPlaceholderText("-80.53");
     longitude = -80.53;
     latitude = 37.18;
-
+    patients = new std::vector<std::pair<std::string, Patient> >;
     doctorClient = new Client(); //Create a client so the doctor can send POST requests via (REST)
 }
 
@@ -32,9 +32,16 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
 // pointer.
 DoctorWindow::~DoctorWindow() {
     delete ui;
-    delete doctorClient;
     if (doctorClient != nullptr)
-        doctorClient = nullptr;
+    {
+      delete doctorClient;
+      doctorClient = nullptr;
+    }
+    if (patients != nullptr)
+    {
+      delete patients;
+      patients = nullptr;
+    }
 }
 
 //Method: on_requestBed_pressed
@@ -63,18 +70,26 @@ void DoctorWindow::on_requestBed_pressed()
     }
     p.set_ailments(addedAilments);
     p.set_treated(false);
+    p.set_assigned_hospital("None"); //just set the assigned hospital to None as it has not been treated
     doctorClient->sendRequest("POST", p.jsonify()); //send the post request
+    patients->push_back(std::make_pair(playerId, p)); //add the patient to the patient list
     ui->requestResponse->setText("Your bed has been requested!");
 
-    //TODO: Wrap this into a function later
-    ailmentVector.clear();
-    ui->injury_checkbox->setChecked(Qt::Unchecked);
-    ui->scan_checkbox->setChecked(Qt::Unchecked);
-    ui->radiation_checkbox->setChecked(Qt::Unchecked);
-    ui->virus_checkbox->setChecked(Qt::Unchecked);
-    ui->respiratory_checkbox->setChecked(Qt::Unchecked);
-    ui->burn_checkbox->setChecked(Qt::Unchecked);
-    ui->cardiac_checkbox->setChecked(Qt::Unchecked);
+    clear_checkboxes();
+
+}
+
+//This method will clear the checkboxes from the doctor ui.
+void DoctorWindow::clear_checkboxes(void)
+{
+  ailmentVector.clear();
+  ui->injury_checkbox->setChecked(Qt::Unchecked);
+  ui->scan_checkbox->setChecked(Qt::Unchecked);
+  ui->radiation_checkbox->setChecked(Qt::Unchecked);
+  ui->virus_checkbox->setChecked(Qt::Unchecked);
+  ui->respiratory_checkbox->setChecked(Qt::Unchecked);
+  ui->burn_checkbox->setChecked(Qt::Unchecked);
+  ui->cardiac_checkbox->setChecked(Qt::Unchecked);
 }
 
 //Callback function to update ailment on change of the checkbox
