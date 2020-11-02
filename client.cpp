@@ -48,19 +48,10 @@ void make_request(http_client & client, const method& mtd, json::value const & j
    make_task_request(client, mtd, jvalue)
       .then([](const http_response& response)
       {
-         return (response.status_code() == status_codes::OK) ?
-             response.extract_json() : pplx::task_from_result(json::value());
-      })
-      .then([](const pplx::task<json::value>& feedback)
-      {
-         try
-         {
-            return_response(feedback.get());
-         }
-         catch (http_exception const & e)
-         {
-            std::cout << e.what() << endl;
-         }
+        if (response.status_code() == status_codes::OK){
+          auto body = response.extract_json().get();
+          std::cout << "Response : " << body.serialize() << '\n';
+        }
       })
       .wait();
 }
@@ -75,7 +66,7 @@ Client::Client()
 /*!
  * \brief Sends request to the server in the form of a post (all that is needed for now, GET is used for debug)
  * \param client command used to determine the type of commmand
- * \param hospital JSON value to be sent to the server 
+ * \param hospital JSON value to be sent to the server
  */
 void Client::sendRequest(const std::string& command, const web::json::value& hospital)
 {

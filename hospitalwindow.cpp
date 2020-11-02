@@ -4,7 +4,15 @@
 HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::HospitalWindow) {
     ui->setupUi(this);
     hospitalClient = new Client();
+  /*  hospitals = new std::vector<std::pair<std::pair<int,bool>, Hospital>>();
+    Hospital h;
+    for (auto i = 0; i < 5; ++i){
+        hospitals->push_back(std::make_pair(std::make_pair(i,false), h));
+    }*/
+    hospitalIndex = 0;
     bedCount = 0;
+    hospital_name = "New River Valley Medical Center";
+    location = std::make_pair(0.0,0.0); //just give default location of 0,0
     start = std::chrono::steady_clock::now();
 }
 
@@ -15,17 +23,17 @@ HospitalWindow::~HospitalWindow() {
       delete hospitalClient;
       hospitalClient = nullptr;
     }
+    /*if (hospitals != nullptr)
+    {
+        delete hospitals;
+        hospitals = nullptr;
+    }
+    */
 }
 
 //Method will be used to generate the bed data and display on the UI chart
 void HospitalWindow::generateBedData(void)
 {
-    //auto db = DBConnection::getInstance();
-
-    //auto hospitals = db->getHospitals();
-    std::cout << "I got some of the patient data" << std::endl
-              << "The hospital size is: " << DBConnection::getInstance()->getHospitals()->size() << std::endl;
-
     //Code that will be used to create a QChart
     QChart *chart = new  QChart(); //create chart
     QBarSeries *series = new QBarSeries(); //create series
@@ -44,10 +52,13 @@ void HospitalWindow::on_hospital_data_pressed()
     generateBedData();
 }
 
+
 void HospitalWindow::on_addHospital_pressed()
 {
     Hospital h; //Create a temp hospital before seeing if it is already in vector
 
+    h.set_location(location.first, location.second);
+    h.set_name(hospital_name);
     //Create all bed specifications for the hospital
     auto bedSpec = web::json::value::object(); //Initialize all pertinent json objects before making request.
     utility::string_t id = utility::conversions::to_string_t("id"); //Get Hospital ID
@@ -94,4 +105,39 @@ void HospitalWindow::on_addHospital_pressed()
     {
       hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
     }
+}
+
+void HospitalWindow::on_Christiansburg_pressed()
+{
+    location = std::make_pair(37.089081, -80.505592);
+    hospitalIndex = 0; //Christiansburg is always index 0
+    hospital_name = "New River Valley Medical Center";
+}
+
+void HospitalWindow::on_Roanoke_pressed()
+{
+    location = std::make_pair(37.252090, -79.942436);
+    hospitalIndex = 1; //Roanoke index is always 1
+    hospital_name = "Carilion Roanoke Memorial Hospital";
+}
+
+void HospitalWindow::on_Lynchburg_pressed()
+{
+    location = std::make_pair(37.416648, -79.169753);
+    hospitalIndex = 2; //Lynchburg index is always 2
+    hospital_name = "Centra Lynchburg General Hospital";
+}
+
+void HospitalWindow::on_Princeton_pressed()
+{
+    location = std::make_pair(37.363190, -81.113136);
+    hospitalIndex = 3; //Princeton index is always 3
+    hospital_name = "Princeton Community Hospital";
+}
+
+void HospitalWindow::on_Bristol_pressed()
+{
+    location = std::make_pair(36.584577,-82.251241);
+    hospitalIndex = 4; //Bristol index is always 4
+    hospital_name = "Bristol Regional Medical Center";
 }
