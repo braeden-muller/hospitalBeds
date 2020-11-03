@@ -23,12 +23,6 @@ HospitalWindow::~HospitalWindow() {
       delete hospitalClient;
       hospitalClient = nullptr;
     }
-    /*if (hospitals != nullptr)
-    {
-        delete hospitals;
-        hospitals = nullptr;
-    }
-    */
 }
 
 //Method will be used to generate the bed data and display on the UI chart
@@ -47,10 +41,12 @@ void HospitalWindow::generateBedData(void)
 
 }
 
-void HospitalWindow::on_hospital_data_pressed()
+//TODO: Generate the bar chart
+/*void HospitalWindow::on_hospital_data_pressed()
 {
     generateBedData();
 }
+*/
 
 
 void HospitalWindow::on_addHospital_pressed()
@@ -140,4 +136,12 @@ void HospitalWindow::on_Bristol_pressed()
     location = std::make_pair(36.584577,-82.251241);
     hospitalIndex = 4; //Bristol index is always 4
     hospital_name = "Bristol Regional Medical Center";
+}
+
+void HospitalWindow::on_deleteHospitalButton_pressed()
+{
+    Hospital h;
+    h.set_location(location.first, location.second);
+    h.set_name(hospital_name);
+    hospitalClient->sendRequest("DELETE", h.jsonify()); //send the delete request for the hospital
 }

@@ -24,7 +24,6 @@ public:
     ~HospitalWindow() override;
 
 private slots:
-    void on_hospital_data_pressed();
 
     void on_addHospital_pressed();
 
@@ -37,6 +36,8 @@ private slots:
     void on_Princeton_pressed();
 
     void on_Bristol_pressed();
+
+    void on_deleteHospitalButton_pressed();
 
 private:
     Ui::HospitalWindow *ui;

@@ -78,6 +78,10 @@ void Client::sendRequest(const std::string& command, const web::json::value& hos
    {
       make_request(*client, methods::GET, json::value::null());// make get request
    }
+   else if (command == "DELETE")
+   {
+     make_request(*client, methods::DEL, hospital);
+   }
 }
 
 Client::~Client() = default;
