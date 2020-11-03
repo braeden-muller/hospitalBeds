@@ -10,10 +10,11 @@ HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui
         hospitals->push_back(std::make_pair(std::make_pair(i,false), h));
     }*/
     hospitalIndex = 0;
-    bedCount = 0;
+    for (auto i = 0; i < 5; ++i) bedCount.push_back(0);
     hospital_name = "New River Valley Medical Center";
     location = std::make_pair(0.0,0.0); //just give default location of 0,0
     start = std::chrono::steady_clock::now();
+    beds2Add = 1;
 }
 
 HospitalWindow::~HospitalWindow() {
@@ -94,8 +95,8 @@ void HospitalWindow::on_addHospital_pressed()
     {
        bedSpec[special][count++] = JSTR(name_by_conditions[it]);
     }
-    bedSpec[id] = bedCount;
-    ++bedCount;
+    bedSpec[id] = bedCount[hospitalIndex];
+    ++bedCount[hospitalIndex];
     Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
     if (h.add_bed(b)) //add the bed to the hospital
     {
@@ -144,4 +145,64 @@ void HospitalWindow::on_deleteHospitalButton_pressed()
     h.set_location(location.first, location.second);
     h.set_name(hospital_name);
     hospitalClient->sendRequest("DELETE", h.jsonify()); //send the delete request for the hospital
+}
+
+void HospitalWindow::on_bedSlider_valueChanged(int value)
+{
+    beds2Add = value;
+}
+
+void HospitalWindow::on_addBedsButton_pressed()
+{
+    Hospital h; //Create a temp hospital before seeing if it is already in vector
+
+    h.set_location(location.first, location.second);
+    h.set_name(hospital_name);
+    //Create all bed specifications for the hospital
+    for (auto i = 0; i < beds2Add; ++i)
+    {
+        auto bedSpec = web::json::value::object(); //Initialize all pertinent json objects before making request.
+        utility::string_t id = utility::conversions::to_string_t("id"); //Get Hospital ID
+        utility::string_t isFull = utility::conversions::to_string_t("isFull");
+        utility::string_t timestamp = utility::conversions::to_string_t("timestamp");
+        utility::string_t handles = utility::conversions::to_string_t("handles");
+        utility::string_t special = utility::conversions::to_string_t("special");
+        bedSpec[isFull] = web::json::value(true); //set bed to being full for the initial treated bed
+        auto now = std::chrono::steady_clock::now();
+
+        //update timestamp
+        bedSpec[timestamp] = web::json::value::number(std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count());
+        std::set<condition> addedHandles;
+        std::set<condition> addedSpecials;
+        utility::string_t handleVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
+                                                utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
+                                                utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
+                                                utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
+        utility::string_t specialVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
+                                                utility::conversions::to_string_t("virus")};
+
+        for (auto s = 0; s < handleLength; ++s)
+        {
+           addedHandles.emplace(conditions_by_name[handleVector[s]].c);
+        }
+        int count = 0;
+        for (auto it : addedHandles)
+        {
+           bedSpec[handles][count++] = JSTR(name_by_conditions[it]);
+        }
+        for (auto s = 0; s < 3; ++s)
+        {
+           addedSpecials.emplace(conditions_by_name[specialVector[s]].c);
+        }
+        count = 0;
+        for (auto it : addedSpecials)
+        {
+           bedSpec[special][count++] = JSTR(name_by_conditions[it]);
+        }
+        bedSpec[id] = bedCount[hospitalIndex];
+        ++bedCount[hospitalIndex];
+        Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
+        h.add_bed(b);//add the bed to the hospital
+    }
+    hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
 }

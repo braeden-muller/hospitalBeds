@@ -17,7 +17,7 @@
    <widget class="QPushButton" name="addHospital">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>50</x>
       <y>0</y>
       <width>141</width>
       <height>31</height>
@@ -80,7 +80,7 @@
    <widget class="QPushButton" name="deleteHospitalButton">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>640</x>
       <y>0</y>
       <width>141</width>
       <height>31</height>
@@ -98,6 +98,41 @@
       <width>751</width>
       <height>411</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="addBedsButton">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>0</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add Beds</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="bedSlider">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>10</y>
+      <width>160</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <number>10</number>
+    </property>
+    <property name="pageStep">
+     <number>2</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
     </property>
    </widget>
   </widget>

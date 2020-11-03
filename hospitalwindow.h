@@ -39,14 +39,19 @@ private slots:
 
     void on_deleteHospitalButton_pressed();
 
+    void on_bedSlider_valueChanged(int value);
+
+    void on_addBedsButton_pressed();
+
 private:
     Ui::HospitalWindow *ui;
-    int bedCount;
+    std::vector<int> bedCount;
     int hospitalIndex;
     std::chrono::time_point<std::chrono::steady_clock> start;
     //std::vector<std::pair<std::pair<int,bool>, Hospital>> *hospitals;
     std::string hospital_name;
     std::pair<double,double> location;
+    int beds2Add;
     Client * hospitalClient;
     void generateBedData(); //TODO: This function will be generating the bed data
 };
