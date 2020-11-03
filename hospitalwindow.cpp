@@ -4,13 +4,8 @@
 HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::HospitalWindow) {
     ui->setupUi(this);
     hospitalClient = new Client();
-  /*  hospitals = new std::vector<std::pair<std::pair<int,bool>, Hospital>>();
-    Hospital h;
-    for (auto i = 0; i < 5; ++i){
-        hospitals->push_back(std::make_pair(std::make_pair(i,false), h));
-    }*/
     hospitalIndex = 0;
-    for (auto i = 0; i < 5; ++i) bedCount.push_back(0);
+    bedCount = 0;
     hospital_name = "New River Valley Medical Center";
     location = std::make_pair(0.0,0.0); //just give default location of 0,0
     start = std::chrono::steady_clock::now();
@@ -95,8 +90,8 @@ void HospitalWindow::on_addHospital_pressed()
     {
        bedSpec[special][count++] = JSTR(name_by_conditions[it]);
     }
-    bedSpec[id] = bedCount[hospitalIndex];
-    ++bedCount[hospitalIndex];
+    bedSpec[id] = bedCount;
+    ++bedCount;
     Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
     if (h.add_bed(b)) //add the bed to the hospital
     {
@@ -199,8 +194,8 @@ void HospitalWindow::on_addBedsButton_pressed()
         {
            bedSpec[special][count++] = JSTR(name_by_conditions[it]);
         }
-        bedSpec[id] = bedCount[hospitalIndex];
-        ++bedCount[hospitalIndex];
+        bedSpec[id] = bedCount;
+        ++bedCount;
         Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
         h.add_bed(b);//add the bed to the hospital
     }

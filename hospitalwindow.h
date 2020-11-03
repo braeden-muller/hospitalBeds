@@ -45,7 +45,7 @@ private slots:
 
 private:
     Ui::HospitalWindow *ui;
-    std::vector<int> bedCount;
+    std::size_t bedCount;
     int hospitalIndex;
     std::chrono::time_point<std::chrono::steady_clock> start;
     //std::vector<std::pair<std::pair<int,bool>, Hospital>> *hospitals;
