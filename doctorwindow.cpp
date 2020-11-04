@@ -23,7 +23,7 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     ui->longitudeLineEdit->setPlaceholderText("-80.53");
     longitude = -80.53;
     latitude = 37.18;
-    patients = new std::vector<std::pair<std::string, Patient> >;
+    patient_ids = new std::vector<std::string>;
     doctorClient = new Client(); //Create a client so the doctor can send POST requests via (REST)
 }
 
@@ -37,10 +37,10 @@ DoctorWindow::~DoctorWindow() {
       delete doctorClient;
       doctorClient = nullptr;
     }
-    if (patients != nullptr)
+    if (patient_ids != nullptr)
     {
-      delete patients;
-      patients = nullptr;
+      delete patient_ids;
+      patient_ids = nullptr;
     }
 }
 
@@ -72,9 +72,9 @@ void DoctorWindow::on_requestBed_pressed()
     p.set_treated(false);
     p.set_assigned_hospital("None"); //just set the assigned hospital to None as it has not been treated
     doctorClient->sendRequest("POST", p.jsonify()); //send the post request
-    patients->push_back(std::make_pair(playerId, p)); //add the patient to the patient list
+  //  patients->push_back(std::make_pair(playerId, p)); //add the patient to the patient list
     ui->requestResponse->setText("Your bed has been requested!");
-
+    patient_ids->push_back(p.get_id());
     clear_checkboxes();
 
 }
@@ -227,4 +227,18 @@ void DoctorWindow::on_longitudeLineEdit_textChanged(const QString &arg1)
       latitude = -78.5;
       ui->latitudeLineEdit->setPlaceholderText("-78.5");
     }
+}
+
+//This method will display in a QDialog Box the number of patients that have been treated
+void DoctorWindow::on_getPatients_pressed()
+{
+   web::json::value j_patient_status;
+   int i = 0;
+   utility::string_t pStatus = utility::conversions::to_string_t("patient_statuses");
+   for (auto it : *patient_ids)
+   {
+     j_patient_status[pStatus][i++] = JSTR(it);
+   }
+   doctorClient->sendRequest("POST", j_patient_status);
+   QMessageBox::information(this,tr("Patient Statuses"), tr("This will hold patient statuses"));
 }
