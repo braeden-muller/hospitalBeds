@@ -38,8 +38,20 @@ bool Hospital::add_bed(const Bed& bed) {
 }
 
 Bed Hospital::get_bed(int index) const {
-  // bounds checking is handled within updateDatabase
-  return beds[index];
+    for (int i = 0; i < beds.size(); i++) {
+        if (beds[(i + index) % beds.size()].get_id() == index)
+            return beds[index];
+    }
+    Bed emptyBed;
+    // std::set<condition> specialties;
+    // std::stringstream s_stream(argv[i]);
+    // std::vector<utility::string_t> specialVec;
+    // specialVec.push_back(utility::conversions::to_string_t("none"));
+    // for (auto it : specialVec) {
+    //      specialties.emplace(conditions_by_name[it].c);
+    // }
+    // emptyBed.set_special(specialties)
+    return emptyBed;
 }
 
 int Hospital::bed_index_by_id(int id) const {

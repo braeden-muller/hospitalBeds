@@ -39,6 +39,36 @@ int Bed::get_id() const {
     return _id;
 }
 
+std::string Bed::get_handles() {
+    std::stringstream out;
+    for (const auto & handle : _handles) {
+        out<<JSTR(name_by_conditions[handle])<<", ";
+    }
+    std::string output = out.str();
+    output.erase(std::remove(output.begin(), output.end(), '\"'), output.end());
+    output.erase(output.end() - 2, output.end());
+    return output;
+}
+
+std::string Bed::get_special() {
+    std::stringstream out;
+    for (const auto & special : _special) {
+        out<<JSTR(name_by_conditions[special])<<", ";
+    }
+    std::string output = out.str();
+    output.erase(std::remove(output.begin(), output.end(), '\"'), output.end());
+    output.erase(output.end() - 2, output.end());
+    return output;
+}
+
+bool Bed::get_full() {
+    return _isFull;
+}
+
+int Bed::get_timestamp() {
+    return _timestamp;
+}
+
 web::json::value Bed::jsonify() {
     web::json::value j_bed;
     j_bed["id"] = _id;
