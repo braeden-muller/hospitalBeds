@@ -1,5 +1,6 @@
 #include <set>
 #include "bed.h"
+#include "patient.h"
 
 Bed::Bed() {
     _id = 0;
@@ -60,4 +61,17 @@ web::json::value Bed::jsonify() {
 
 bool operator<(const Bed& l, const Bed& r) {
     return l._timestamp < r._timestamp;
+}
+
+double Bed::rank(const Patient & patient) const {
+    int specHits = 0;
+    auto ailments = patient.get_ailments();
+    for (auto & ailment : ailments) {
+        if (_handles.count(ailment) == 0)
+            return 0;
+        if (_special.count(ailment) > 0)
+            specHits++;
+    }
+
+    return 1 + (((double)specHits) / (2.0 * (double)ailments.size()));
 }

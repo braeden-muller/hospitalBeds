@@ -70,7 +70,7 @@ void DoctorWindow::on_requestBed_pressed()
     }
     p.set_ailments(addedAilments);
     p.set_treated(false);
-    p.set_assigned_hospital("None"); //just set the assigned hospital to None as it has not been treated
+    p.set_assigned_hospital("NONE"); //just set the assigned hospital to None as it has not been treated
     doctorClient->sendRequest("POST", p.jsonify()); //send the post request
   //  patients->push_back(std::make_pair(playerId, p)); //add the patient to the patient list
     ui->requestResponse->setText("Your bed has been requested!");
