@@ -1,3 +1,4 @@
+
 #include <chrono>
 #include "db_connection.h"
 
@@ -33,28 +34,8 @@ void DBConnection::shutdown() {
     instance = nullptr;
 }
 
-bool DBConnection::registerHospital(const std::string &name, std::string &msgs) {
-    // Handle fail conditions
-    if (name.empty()) {
-        msgs = "No hospital name specified";
-        return false;
-    }
-    for(int i=0; i < hospitals.size(); i++)
-    {
-        if (std::get<1>(hospitals[i]).get_name() == name) {
-            msgs = "Hospital already exists";
-            return false;
-        }
-    }
-    
-
-    // Add hospital
-    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    //hospitals.emplace(name, std::ctime(&now));
-    Hospital newHospital;
-    newHospital.set_name(name);
-    hospitals.push_back(std::make_tuple(size_t(hospitals.size()), newHospital, true));
-    msgs = "Successfully added hospital";
+bool DBConnection::registerHospital(Hospital h, std::string &msgs) {
+    hospitals.push_back(std::make_tuple(hospitals.size(),h,false));
     return true;
 }
 
@@ -131,8 +112,8 @@ int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
     Hospital h;
     Bed b;
     int pID = 0;
+    std:: string msgs;
     for (int i = 0; i < argc; i++) {
-      //printf("%d: , %s = %s\n", i, columnName[i], argv[i] ? argv[i] : "NULL");
       if((strcmp(columnName[1], "name") == 0)) {
           if(strcmp(columnName[i], "ID") == 0) {
               h.set_id(atoi(argv[i]));
@@ -146,7 +127,7 @@ int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
               getline(s_stream, latString, ',');
               getline(s_stream, lonString);
               h.set_location(atof(latString.c_str()), atof(lonString.c_str()));
-              hospitals.push_back(std::make_tuple(0,h,false));
+              registerHospital(h, msgs);
           }
       }
       else if((strcmp(columnName[1], "parentHospitalID") == 0)) {
@@ -154,7 +135,7 @@ int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
               b.set_id(atoi(argv[i]));
           }
           else if(strcmp(columnName[i], "parentHospitalID") == 0) {
-            pID = atoi(argv[i]);
+              pID = atoi(argv[i]);
           }
           else if(strcmp(columnName[i], "handles") == 0) {
               std::set<condition> handles;
@@ -194,7 +175,7 @@ int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
           else if(strcmp(columnName[i], "timestamp") == 0) {
               b.set_timestamp(atoi(argv[i]));
               // adds the bed to the hospital.
-              std::get<1>(hospitals[0]).add_bed(b);
+              std::get<1>(hospitals[pID]).add_bed(b);
           }
       }
           //std::cout<<columnName[i]<<": "<<argv[i]<<std::endl;
@@ -205,21 +186,66 @@ int DBConnection::databaseCallback(int argc, char **argv, char **columnName) {
 
 bool DBConnection::updateDatabase(Hospital h, std::string & msgs) {
     //iterate through hospital beds and find which beds need to be updated
-    std::cout<<"in update"<<std::endl;
     int error = 0;
+    int bedID;
     char *zerrMsg = 0;
     std::stringstream updateStream;
+    int pID = -1;
+
+    for (int hIt=0; hIt < hospitals.size(); hIt++) {
+      if (std::get<1>(hospitals[hIt]).get_name() == h.get_name())
+          pID = hIt;
+    }
+
+    if (pID == -1) {
+        pID = hospitals.size();
+        updateStream<<"INSERT INTO hospital(ID,name,location) VALUES("<<pID;
+        updateStream<<", \""<<h.get_name();
+        //TODO: convert location into string
+        updateStream<<"\", \""<<std::get<0>(h.get_location());
+        updateStream<<", "<<std::get<1>(h.get_location());
+        updateStream<<"\")";
+        msgs.append("\n added new hospital");
+        std::cout<<"\n"<<updateStream.str()<<std::endl;
+        //error = sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
+        registerHospital(h, msgs);
+        if (error) {
+            error = 0;
+            std::cout<<"Could not add to hospital"<<std::endl;
+        }
+    }
+    pID = 0;
+    
     for (int i=0; i < h.get_size(); i++)
     {
-        int bedID = h.get_bed(i).get_id();
-        updateStream<<"UPDATE bed SET occupied = 1 WHERE ID="<<bedID;
-        error |= sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
+        bedID = h.get_bed(i).get_id();
+        updateStream.str("");
+        updateStream<<"UPDATE bed SET occupied="<<h.get_bed(i).get_full()<<" WHERE ID="<<bedID;
+        std::cout<<updateStream.str()<<std::endl;
+        error = sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
+
+        if (error) {
+            error = 0;
+            msgs.append("\nadded new bed to bed table with id=");
+            msgs.append(std::to_string(bedID));
+            updateStream.str("");
+            updateStream<<"INSERT INTO bed(ID,parentHospitalID,handles,specialties,occupied,timestamp) VALUES("<<bedID;
+            updateStream<<", "<<pID;
+            updateStream<<", \""<<h.get_bed(i).get_handles();
+            updateStream<<"\", \""<<h.get_bed(i).get_special();
+            updateStream<<"\", "<<h.get_bed(i).get_full();
+            updateStream<<", "<<h.get_bed(i).get_timestamp();
+            updateStream<<")";
+            std::cout<<updateStream.str()<<std::endl;
+            error = sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
+            if (error) {
+                msgs.append("\n\t something went wrong with the insertion of this bed");
+            }
+            //sqlite3_close(db);
+            // return false;
+        }
         updateStream.clear();
     }
-    if (error) {
-        msgs.append("could not open update bed table");
-        sqlite3_close(db);
-        return false;
-    }
+    std::cout<<"successfully updated hospital"<<std::endl;
     return true;
 }

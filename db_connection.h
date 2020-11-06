@@ -40,7 +40,7 @@ public:
      * \param msgs Messages to be returned (e.g. Specific error or success message)
      * \return true if successful, false otherwise
      */
-    bool registerHospital(const std::string & name, std::string & msgs);
+    bool registerHospital(Hospital h, std::string & msgs);
 
     /*!
      * \brief Removes the registration for an existing hospital currently remembered by the system

@@ -22,8 +22,14 @@ public:
     void set_special(const std::set<condition> & special);
     void set_full(bool isFull);
     void set_timestamp(int timestamp);
-    /// Converts this object to json
+
     int get_id() const;
+    std::string get_handles();
+    std::string get_special();
+    bool get_full();
+    int get_timestamp();
+  
+    /// Converts this object to json
     double rank(const Patient & patient) const;
     web::json::value jsonify();
 
