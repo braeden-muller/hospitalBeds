@@ -26,12 +26,15 @@ public:
     std::set<condition> get_ailments() const;
     std::string get_id() const;
     std::string get_assigned_hospital() const;
+    void add_attempt(const std::string & hospital);
+    bool has_attempted(const std::string & hospital) const;
     web::json::value jsonify();
 private:
     std::string _id;
     std::set<condition> _ailments;
     std::pair<double, double> location;
     std::string _assignedHospital;
+    std::set<std::string> _attempts;
     bool _treated;
 };
 
