@@ -61,6 +61,7 @@ private:
     std::size_t patientId;
     std::vector<utility::string_t> ailmentVector;
     std::vector<std::string> * patient_ids;
+    std::vector<Patient> * untreated_patients;
 
     void clear_checkboxes(void);
 };

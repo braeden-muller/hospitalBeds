@@ -245,7 +245,6 @@ void DoctorWindow::on_getPatients_pressed()
    {
      j_patient_status[pStatus][i++] = JSTR(it);
    }
-   auto test = doctorClient->sendRequest("POST", j_patient_status);
-   std::cout << " Response in doctorwindow: " << test << std::endl;
+   doctorClient->sendRequest("POST", j_patient_status);
    QMessageBox::information(this,tr("Patient Statuses"), tr("This will hold patient statuses"));
 }
