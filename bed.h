@@ -6,7 +6,9 @@
 #include <map>
 #include "json_def.h"
 #include "conditions.h"
+#include "patient.h"
 
+class Patient;
 
 /*!
  * This represents all the data associated with a single bed in a hospital
@@ -28,6 +30,7 @@ public:
     int get_timestamp();
   
     /// Converts this object to json
+    double rank(const Patient & patient) const;
     web::json::value jsonify();
 
     friend bool operator<(const Bed& l, const Bed& r);

@@ -24,15 +24,34 @@ public:
     ~HospitalWindow() override;
 
 private slots:
-    void on_hospital_data_pressed();
 
     void on_addHospital_pressed();
 
+    void on_Christiansburg_pressed();
+
+    void on_Roanoke_pressed();
+
+    void on_Lynchburg_pressed();
+
+    void on_Princeton_pressed();
+
+    void on_Bristol_pressed();
+
+    void on_deleteHospitalButton_pressed();
+
+    void on_bedSlider_valueChanged(int value);
+
+    void on_addBedsButton_pressed();
+
 private:
     Ui::HospitalWindow *ui;
-    int bedCount;
+    std::size_t bedCount;
+    int hospitalIndex;
     std::chrono::time_point<std::chrono::steady_clock> start;
-    std::vector<Hospital> *hospitals;
+    //std::vector<std::pair<std::pair<int,bool>, Hospital>> *hospitals;
+    std::string hospital_name;
+    std::pair<double,double> location;
+    int beds2Add;
     Client * hospitalClient;
     void generateBedData(); //TODO: This function will be generating the bed data
 };

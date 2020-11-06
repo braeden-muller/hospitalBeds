@@ -15,7 +15,8 @@ Patient::Patient(web::json::value & spec) {
     location.first = spec["location"][0].as_double();
     location.second = spec["location"][1].as_double();
     _treated = spec["isTreated"].as_bool();
-    _assignedHospital = spec["assigned"].as_string();
+    if (spec.has_field("assigned"))
+        _assignedHospital = spec["assigned"].as_string();
 }
 
 Patient::Patient() {
@@ -23,7 +24,7 @@ Patient::Patient() {
     location.first = 37.0;
     location.second = -79.0;
     _treated = false;
-    _assignedHospital = "None"; //set to no assigned hospital upon startup
+    _assignedHospital = "NONE"; //set to no assigned hospital upon startup
 }
 
 void Patient::set_ailments(const std::set<condition> & ailments) {
@@ -82,4 +83,12 @@ web::json::value Patient::jsonify() {
 
 std::string Patient::get_id() {
     return _id;
+}
+
+void Patient::add_attempt(const std::string & hospital) {
+    _attempts.insert(hospital);
+}
+
+bool Patient::has_attempted(const std::string &hospital) const {
+    return _attempts.count(hospital) > 0;
 }

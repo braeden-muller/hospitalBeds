@@ -68,6 +68,7 @@ size_t Hospital::get_size() const {
 }
 
 void Hospital::update(const Hospital & other, std::vector<Patient>& accepted, std::vector<Patient>& declined) {
+    _name = other.get_name();
     // Make a delta hospital that only contains altered and meta information
     Hospital delta(other.get_name(), other.get_location(), other.get_id());
 
@@ -76,18 +77,18 @@ void Hospital::update(const Hospital & other, std::vector<Patient>& accepted, st
     // Keep track of whether the patient was accepted or declined
     for (int i = 0; i < other.patientQueue.size(); i++) {
         // If the patient was declined, sort it into declined
-        if (patientQueue[i].get_assigned_hospital() == "Declined") {
-            Patient thisPatient = patientQueue[i];
-            thisPatient.set_assigned_hospital("None");
+        if (other.patientQueue[i].get_assigned_hospital() == "DECLINED") {
+            Patient thisPatient = other.patientQueue[i];
+            thisPatient.set_assigned_hospital("NONE");
             declined.push_back(thisPatient);
         }
         // If no action, keep hold of it
-        else if (patientQueue[i].get_assigned_hospital() == "None") {
+        else if (other.patientQueue[i].get_assigned_hospital() == "NONE" || other.patientQueue[i].get_assigned_hospital().empty()) {
             this->patientQueue.push_back(patientQueue[i]);
         }
         // If there is a hospital name, sort it into accepted
         else {
-            accepted.push_back(patientQueue[i]);
+            accepted.push_back(other.patientQueue[i]);
         }
     }
 
@@ -147,9 +148,38 @@ bool Hospital::isMetaAltered() const {
     return metaAltered;
 }
 
+void Hospital::add_patient(Patient & patient) {
+    patientQueue.push_back(patient);
+    patient.add_attempt(_name);
+}
+
+void Hospital::push_patient(const Patient& patient) {
+    patientQueue.push_back(patient);
+}
+
 void Hospital::remove_patient(const std::string &id) {
     for (auto it = patientQueue.begin(); it < patientQueue.end(); it++) {
         if (it->get_id() == id)
             patientQueue.erase(it);
     }
+}
+
+double Hospital::rank(const Patient &patient) const {
+    if (patient.has_attempted(_name))
+        return 0;
+
+    double highest = 0;
+    for (auto & b : beds) {
+        double rank = b.rank(patient);
+        highest = rank > highest ? rank : highest;
+
+        if (highest == 1.5)
+            break;
+    }
+
+    double dlat = patient.get_location().first - location.first;
+    double dlon = patient.get_location().second - location.second;
+    double distance = sqrt((dlat * dlat) + (dlon * dlon));
+    distance = distance == 0 ? 0.000001 : distance;
+    return (1 / distance) * highest;
 }

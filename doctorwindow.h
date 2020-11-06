@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QStringList>
+#include <QMessageBox>
 #include "client.h"
 #include "hospital.h"
 #include "patient.h"
@@ -49,6 +50,8 @@ private slots:
 
     void on_longitudeLineEdit_textChanged(const QString &arg1);
 
+    void on_getPatients_pressed();
+
 private:
     Ui::DoctorWindow *ui; //the pointer to main display
     std::string ailment; //string for the ailment
@@ -57,7 +60,7 @@ private:
     double longitude;
     std::size_t patientId;
     std::vector<utility::string_t> ailmentVector;
-    std::vector<std::pair<std::string, Patient>> * patients;
+    std::vector<std::string> * patient_ids;
 
     void clear_checkboxes(void);
 };

@@ -23,6 +23,8 @@ public:
     void set_id(int id);
     size_t get_size() const;
 
+    void add_patient(Patient &patient);
+    void push_patient(const Patient& patient);
     void remove_patient(const std::string& id);
 
     bool add_bed(const Bed& bed);
@@ -31,6 +33,8 @@ public:
 
     Bed get_bed(int index) const;
     int bed_index_by_id(int id) const;
+
+    double rank(const Patient & patient) const;
 
     /// Converts this object to json
     web::json::value jsonify();

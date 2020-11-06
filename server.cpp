@@ -79,8 +79,24 @@ localhost:8080/hospital?patient=c46f590e-e37f-4788-a784-a303412e7a99
 static std::map<std::string, Hospital> hospitals;
 static std::map<std::string, Patient> patients;
 
-void routePatient(const Patient& patient) {
-    //TODO
+class value;
+
+void routePatient(Patient& patient) {
+    double highest = 0;
+    Hospital * bestHospital = nullptr;
+    for (auto & hEntry : hospitals) {
+        auto* h = &hEntry.second;
+        double rank = h->rank(patient);
+        if (rank > highest) {
+            highest = rank;
+            bestHospital = h;
+        }
+    }
+
+    if (!bestHospital)
+        patient.set_assigned_hospital("DECLINED");
+    else
+        bestHospital->add_patient(patient);
 }
 
 /*!
@@ -126,8 +142,10 @@ void handle_post(const http_request& request) {
         cout << "    Received: " << body.serialize() << endl; // Serialize just converts to a UTF-8 string
 
         if (body.has_field("patient")) {
-            Patient patient(body["patient"]);
-            patients.emplace(patient.get_id(), patient);
+            auto thing = body["patient"];
+            Patient patient(thing);
+            patients.insert({patient.get_id(), patient});
+            routePatient(patient);
             request.reply(status_codes::OK);
         }
         else if (body.has_field("patient_statuses")) {
@@ -158,6 +176,14 @@ void handle_post(const http_request& request) {
             auto j_beds = body["beds"].as_array();
             for (auto &j_bed : j_beds) {
                 hospital.add_bed(Bed(j_bed));
+            }
+
+            // Parse hospital queue
+            if (body.has_array_field("patientQueue")) {
+                auto j_patients = body["patientQueue"].as_array();
+                for (auto &j_patient : j_patients) {
+                    hospital.push_patient(Patient(j_patient["patient"]));
+                }
             }
 
             std::vector<Patient> accepted;
