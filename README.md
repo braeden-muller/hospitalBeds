@@ -30,7 +30,7 @@ hospitalBeds is an executable with 3 different operating modes. These modes are 
   - Qt5 - QtWidget and QtCharts: 
     - Installation: 
       - Install QtCreator community with widgets and charts
-      - `udo apt install libqt5charts5-dev`
+      - `sudo apt-get install libqt5charts5-dev`
   - casablanca for REST SDK 
     - Installation: 
       - [Follow official installation guide](https://github.com/Microsoft/cpprestsdk/wiki/How-to-build-for-Linux)
