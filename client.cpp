@@ -13,6 +13,7 @@ using namespace web::http::client;
 using std::cout;
 using std::cerr;
 using std::endl;
+web::json::value body;
 
 /*!
  * \brief Dispatches the request
@@ -45,12 +46,13 @@ void return_response(json::value const & jvalue)
  */
 void make_request(http_client & client, const method& mtd, json::value const & jvalue)
 {
-   make_task_request(client, mtd, jvalue)
+   pplx::task_group_status r = make_task_request(client, mtd, jvalue)
       .then([](const http_response& response)
       {
         if (response.status_code() == status_codes::OK){
-          auto body = response.extract_json().get();
+          body = response.extract_json().get();
           std::cout << "Response : " << body.serialize() << '\n';
+          //global_return = body;
         }
       })
       .wait();
@@ -60,7 +62,6 @@ void make_request(http_client & client, const method& mtd, json::value const & j
 Client::Client()
 {
    client = new http_client("http://localhost:8080");
-    //Useful video https://www.youtube.com/watch?v=D7fiNQX7P5w
 }
 
 /*!
@@ -68,20 +69,17 @@ Client::Client()
  * \param client command used to determine the type of commmand
  * \param hospital JSON value to be sent to the server
  */
-void Client::sendRequest(const std::string& command, const web::json::value& hospital)
+web::json::value Client::sendRequest(const std::string& command, const web::json::value& hospital)
 {
    if (command == "POST")
    {
       make_request(*client, methods::POST,hospital); //post value
    }
-   else if (command == "GET")
-   {
-      make_request(*client, methods::GET, json::value::null());// make get request
-   }
    else if (command == "DELETE")
    {
-     make_request(*client, methods::DEL, hospital);
+      make_request(*client, methods::DEL, hospital);
    }
+   return body;
 }
 
 Client::~Client() = default;

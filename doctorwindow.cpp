@@ -245,6 +245,31 @@ void DoctorWindow::on_getPatients_pressed()
    {
      j_patient_status[pStatus][i++] = JSTR(it);
    }
-   doctorClient->sendRequest("POST", j_patient_status);
-   QMessageBox::information(this,tr("Patient Statuses"), tr("This will hold patient statuses"));
+   auto r = doctorClient->sendRequest("POST", j_patient_status);
+   for (int i = 0; i < 100000; ++i); //Kill me now
+   /*std::istringstream iss(r.serialize());
+   std::string s;
+   std::string patientLine = "";
+   std::vector<int> newlyTreatedPatients;
+   while (iss >> s)
+   {
+     std::cout << "HERE" << std::endl;
+     std::cout << s << std::endl;
+
+  }
+  */
+  std::string s = r.serialize();
+  bool denied = false;
+  for (auto i = 0; i < untreated_patients->size(); ++i)
+  {
+    if (s.find("DECLINE"))
+    {
+      std::cout << "Patient denied" << std::endl;
+      denied = true;
+    }
+  }
+  if (denied)
+    QMessageBox::information(this,tr("Patient Statuses"), tr("Some patients were denied."));
+  else
+    QMessageBox::information(this,tr("Patient Statuses"), tr("All patients were accepted."));
 }

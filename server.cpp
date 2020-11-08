@@ -146,7 +146,7 @@ void handle_post(const http_request& request) {
             Patient patient(thing);
             patients.insert({patient.get_id(), patient});
             routePatient(patient);
-            request.reply(status_codes::OK);
+            request.reply(status_codes::OK,patient.jsonify());
         }
         else if (body.has_field("patient_statuses")) {
             json::value to_reply;

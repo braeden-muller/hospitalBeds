@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QStringList>
 #include <QMessageBox>
+#include <cpprest/http_listener.h>
 #include "client.h"
 #include "hospital.h"
 #include "patient.h"
