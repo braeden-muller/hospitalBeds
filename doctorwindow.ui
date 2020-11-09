@@ -21,7 +21,7 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>190</y>
+      <y>250</y>
       <width>211</width>
       <height>51</height>
      </rect>
@@ -120,9 +120,9 @@
    <widget class="QLabel" name="latitudeLabel">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>410</x>
       <y>70</y>
-      <width>67</width>
+      <width>101</width>
       <height>17</height>
      </rect>
     </property>
@@ -135,7 +135,7 @@
      <rect>
       <x>610</x>
       <y>70</y>
-      <width>71</width>
+      <width>101</width>
       <height>17</height>
      </rect>
     </property>
@@ -146,8 +146,8 @@
    <widget class="QLineEdit" name="latitudeLineEdit">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>120</y>
+      <x>400</x>
+      <y>160</y>
       <width>101</width>
       <height>25</height>
      </rect>
@@ -160,26 +160,13 @@
     <property name="geometry">
      <rect>
       <x>600</x>
-      <y>120</y>
+      <y>160</y>
       <width>101</width>
       <height>25</height>
      </rect>
     </property>
     <property name="text">
      <string>-80.53</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="getPatients">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>290</y>
-      <width>211</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Get Patient Status</string>
     </property>
    </widget>
   </widget>

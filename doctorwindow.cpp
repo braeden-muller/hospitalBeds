@@ -23,6 +23,9 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     ui->longitudeLineEdit->setPlaceholderText("-80.53");
     longitude = -80.53;
     latitude = 37.18;
+    timer = new QTimer(parent);
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(getStatus()));
+    timer->start(10000); //time specified in ms, so poll every 10 seconds
     patient_ids = new std::vector<std::string>;
     untreated_patients = new std::vector<Patient>;
     doctorClient = new Client(); //Create a client so the doctor can send POST requests via (REST)
@@ -47,6 +50,11 @@ DoctorWindow::~DoctorWindow() {
     {
       delete untreated_patients;
       untreated_patients = nullptr;
+    }
+    if (timer != nullptr)
+    {
+      delete timer;
+      timer = nullptr;
     }
 }
 
@@ -235,7 +243,7 @@ void DoctorWindow::on_longitudeLineEdit_textChanged(const QString &arg1)
 }
 
 //This method will display in a QDialog Box the number of patients that have been treated
-void DoctorWindow::on_getPatients_pressed()
+void DoctorWindow::getStatus()
 {
    std::stringstream ss;
    web::json::value j_patient_status;

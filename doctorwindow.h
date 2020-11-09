@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QStringList>
+#include <QTimer>
 #include <QMessageBox>
 #include <cpprest/http_listener.h>
 #include "client.h"
@@ -51,12 +52,13 @@ private slots:
 
     void on_longitudeLineEdit_textChanged(const QString &arg1);
 
-    void on_getPatients_pressed();
+    void getStatus();
 
 private:
     Ui::DoctorWindow *ui; //the pointer to main display
     std::string ailment; //string for the ailment
     Client * doctorClient; //used to send request to client
+    QTimer * timer;
     double latitude;
     double longitude;
     std::size_t patientId;
