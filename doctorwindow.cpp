@@ -253,31 +253,63 @@ void DoctorWindow::getStatus()
    {
      j_patient_status[pStatus][i++] = JSTR(it);
    }
-   auto r = doctorClient->sendRequest("POST", j_patient_status);
-   for (int i = 0; i < 100000; ++i); //Kill me now
-   /*std::istringstream iss(r.serialize());
-   std::string s;
-   std::string patientLine = "";
-   std::vector<int> newlyTreatedPatients;
-   while (iss >> s)
+   try
    {
-     std::cout << "HERE" << std::endl;
-     std::cout << s << std::endl;
-
-  }
-  */
-  std::string s = r.serialize();
-  bool denied = false;
-  for (auto i = 0; i < untreated_patients->size(); ++i)
-  {
-    if (s.find("DECLINE"))
+     auto r = doctorClient->sendRequest("POST", j_patient_status);
+     for (int i = 0; i < 100000; ++i); //Kill me now
+    
+    web::json::value test = r;
+    auto arr = test.as_array();
+    std::vector<Patient> temp;
+    std::string denied_ids = "Denied IDs: \n";
+    std::string accepted_ids = "Accepted IDs: \n";
+    for (auto &a : arr)
     {
-      std::cout << "Patient denied" << std::endl;
-      denied = true;
+      std::cout << "In here" << std::endl;
+      Patient p(a["patient"]);
+      temp.push_back(p);
     }
-  }
-  if (denied)
-    QMessageBox::information(this,tr("Patient Statuses"), tr("Some patients were denied."));
-  else
-    QMessageBox::information(this,tr("Patient Statuses"), tr("All patients were accepted."));
+    //Loop through returned patients
+    for (auto a : temp)
+    {
+      int treated = -1;
+      for (auto i = 0; i < untreated_patients->size(); ++i)
+      {
+        //See if a decision has been made on the patient by looping through and chekcing
+        //all untreated patients ids.
+        std::cout << "In untreated patients" << std::endl;
+        std::cout << a.get_assigned_hospital() << std::endl;
+        if (a.get_assigned_hospital() != "NONE" && a.get_id() == untreated_patients->at(i).get_id())
+        {
+          std::cout << "Found one" << std::endl;
+          treated = i;
+          //If declined push into denied ids vector.
+          if (a.get_assigned_hospital() == "DECLINED")
+          {
+            denied_ids += a.get_id() + '\n';
+          }
+          //If accpeted push into accppted ids vector
+          else
+          {
+            accepted_ids += a.get_id() + '\n';
+          }
+          break;
+        }
+      }
+      if (treated != -1)
+      {
+        untreated_patients->erase(untreated_patients->begin() + treated);
+      }
+    }
+    //Dumb conversion to const char * for compilation purposes.
+    std::string output = denied_ids + accepted_ids;
+    const char * msg = output.c_str();
+    QMessageBox::information(this,tr("Patient Statuses"), tr(msg));
+   }
+   catch(...)
+   {
+     QMessageBox::information(this,tr("Error"), tr("Please start the server."));
+   }
+
+
 }
