@@ -1,3 +1,9 @@
+# Build Instructions
+The application is developed for and is verified to work on Ubuntu LTS 20.04 and 20.10
+Go to source directory and run
+  1. `cmake .`
+  2. `make`
+
 # Hospital Beds
 
 hospitalBeds is an executable with 3 different operating modes. These modes are as follows:
@@ -20,21 +26,22 @@ hospitalBeds is an executable with 3 different operating modes. These modes are 
   
   - SQLite3 
      - Installation: 
-       - Linux: sudo apt-get install libsqlite3-dev
+       - `sudo apt-get install libsqlite3-dev`
   - Qt5 - QtWidget and QtCharts: 
     - Installation: 
-      - Linux: Install QtCreator community with widgets and charts
-      - sudo apt install libqt5charts5-dev
+      - Install QtCreator community with widgets and charts
+      - `sudo apt-get install libqt5charts5-dev`
   - casablanca for REST SDK 
     - Installation: 
-      - Linux: https://github.com/Microsoft/cpprestsdk/wiki/How-to-build-for-Linux
+      - [Follow official installation guide](https://github.com/Microsoft/cpprestsdk/wiki/How-to-build-for-Linux)
   - lcurses
     - Installation: 
-      - Linux: sudo apt-get install libncurses5-dev libncursesw5-dev
+      - `sudo apt-get install libncurses5-dev libncursesw5-dev`
+  - UUID
+    - Installation:
+      - `sudo apt-get install uuid-dev`
     
 # Other Details
   
   Project built using CMake, and programming languages used are C++ and C. REST service is used for communication and 
   SQLite is used for database.
-  
-
