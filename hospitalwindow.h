@@ -2,6 +2,7 @@
 #define HOSPITALWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "client.h"
 #include "hospital.h"
 
@@ -43,16 +44,19 @@ private slots:
 
     void on_addBedsButton_pressed();
 
+    void getStatus();
+
 private:
     Ui::HospitalWindow *ui;
     std::size_t bedCount;
     int hospitalIndex;
     std::chrono::time_point<std::chrono::steady_clock> start;
-    //std::vector<std::pair<std::pair<int,bool>, Hospital>> *hospitals;
+    std::vector<Hospital> * hospitals_in_use;
     std::string hospital_name;
     std::pair<double,double> location;
     int beds2Add;
     Client * hospitalClient;
+    QTimer * timer;
     void generateBedData(); //TODO: This function will be generating the bed data
 };
 #endif // HOSPITALWINDOW_H

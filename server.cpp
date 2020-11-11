@@ -173,11 +173,19 @@ void handle_post(const http_request& request) {
             hospital.set_location(location[0].as_double(), location[1].as_double());
 
             // Parse hospital beds
-            auto j_beds = body["beds"].as_array();
-            for (auto &j_bed : j_beds) {
-                hospital.add_bed(Bed(j_bed));
-            }
 
+            //Temporary try catch to avoid error in server when not updating any beds
+            //when polling. Feel free to remove
+            try {
+              auto j_beds = body["beds"].as_array();
+              for (auto &j_bed : j_beds) {
+                  hospital.add_bed(Bed(j_bed));
+              }
+            }
+            catch(...)
+            {
+              int a = 1;
+            }
             // Parse hospital queue
             if (body.has_array_field("patientQueue")) {
                 auto j_patients = body["patientQueue"].as_array();
