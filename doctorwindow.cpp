@@ -25,7 +25,7 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     latitude = 37.18;
     timer = new QTimer(parent);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(getStatus()));
-    timer->start(10000); //time specified in ms, so poll every 10 seconds
+    timer->start(45000); //time specified in ms, so poll every 45 seconds
     patient_ids = new std::vector<std::string>;
     untreated_patients = new std::vector<Patient>;
     doctorClient = new Client(); //Create a client so the doctor can send POST requests via (REST)
@@ -257,7 +257,7 @@ void DoctorWindow::getStatus()
    {
      auto r = doctorClient->sendRequest("POST", j_patient_status);
      for (int i = 0; i < 100000; ++i); //Kill me now
-    
+
     web::json::value test = r;
     auto arr = test.as_array();
     std::vector<Patient> temp;

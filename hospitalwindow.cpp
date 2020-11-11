@@ -15,7 +15,7 @@ HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui
     //Poll for hospitals data
     timer = new QTimer(parent);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(getStatus()));
-    timer->start(10000); //time specified in ms, so poll every 10 seconds
+    timer->start(60000); //time specified in ms, so poll every 1 minute
 }
 
 HospitalWindow::~HospitalWindow() {
@@ -59,11 +59,11 @@ void HospitalWindow::getStatus()
 {
   try
   {
-    for (auto it : *hospitals_in_use)
+    for (auto i= 0 ; i < hospitals_in_use->size();++i)
     {
       Hospital h;
-      h.set_name(it.get_name());
-      h.set_location(it.get_location().first, it.get_location().second);
+      h.set_name(hospitals_in_use->at(i).get_name());
+      h.set_location(hospitals_in_use->at(i).get_location().first, hospitals_in_use->at(i).get_location().second);
       auto rec = hospitalClient->sendRequest("POST", h.jsonify());
       std::cout << "IN HOSPTIAL CLIENT:  " << rec.serialize() << std::endl;
     }
@@ -108,7 +108,9 @@ void HospitalWindow::on_addHospital_pressed()
                                             utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
                                             utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
     utility::string_t specialVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
-                                            utility::conversions::to_string_t("virus")};
+                                            utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
+                                            utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
+                                            utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
 
     for (auto s = 0; s < handleLength; ++s)
     {
@@ -139,49 +141,48 @@ void HospitalWindow::on_addHospital_pressed()
     bool hospital_already_added = false;
     if (!hospitals_in_use->empty())
     {
-      for (auto it : *hospitals_in_use){
-        if (h.get_name() == it.get_name()){
+      for (auto i = 0; i < hospitals_in_use->size(); ++i){
+        if (h.get_name() == hospitals_in_use->at(i).get_name()){
           hospital_already_added = true; //set this to true to denote a hospital already being added
           break;
         }
       }
     }
     if (!hospital_already_added)
+    {
+      h.set_id(hospitalIndex);
+      hospitalIndex++;
       hospitals_in_use->push_back(h); //add the hospital so it can be polled for data
+    }
 }
 
 void HospitalWindow::on_Christiansburg_pressed()
 {
     location = std::make_pair(37.089081, -80.505592);
-    hospitalIndex = 0; //Christiansburg is always index 0
     hospital_name = "New River Valley Medical Center";
 }
 
 void HospitalWindow::on_Roanoke_pressed()
 {
     location = std::make_pair(37.252090, -79.942436);
-    hospitalIndex = 1; //Roanoke index is always 1
     hospital_name = "Carilion Roanoke Memorial Hospital";
 }
 
 void HospitalWindow::on_Lynchburg_pressed()
 {
     location = std::make_pair(37.416648, -79.169753);
-    hospitalIndex = 2; //Lynchburg index is always 2
     hospital_name = "Centra Lynchburg General Hospital";
 }
 
 void HospitalWindow::on_Princeton_pressed()
 {
     location = std::make_pair(37.363190, -81.113136);
-    hospitalIndex = 3; //Princeton index is always 3
     hospital_name = "Princeton Community Hospital";
 }
 
 void HospitalWindow::on_Bristol_pressed()
 {
     location = std::make_pair(36.584577,-82.251241);
-    hospitalIndex = 4; //Bristol index is always 4
     hospital_name = "Bristol Regional Medical Center";
 }
 
@@ -190,7 +191,27 @@ void HospitalWindow::on_deleteHospitalButton_pressed()
     Hospital h;
     h.set_location(location.first, location.second);
     h.set_name(hospital_name);
-    hospitalClient->sendRequest("DELETE", h.jsonify()); //send the delete request for the hospital
+    bool hospital_exists = false;
+    int index_to_erase = -1;
+    for (auto i = 0; i < hospitals_in_use->size();++i){
+      if (h.get_name() == hospitals_in_use->at(i).get_name()){
+        index_to_erase = i;
+        hospital_exists = true;
+        break;
+      }
+    }
+    if (hospital_exists)
+    {
+      hospitalClient->sendRequest("DELETE", h.jsonify()); //send the delete request for the hospital
+      if (index_to_erase != -1){
+        hospitals_in_use->erase(hospitals_in_use->begin()+index_to_erase);
+      }
+    }
+    else
+    {
+      QMessageBox::information(this,tr("Error"), tr("No hospitals are in use yet, please select hospital"));
+    }
+
 }
 
 void HospitalWindow::on_bedSlider_valueChanged(int value)
@@ -205,12 +226,16 @@ void HospitalWindow::on_addBedsButton_pressed()
     h.set_location(location.first, location.second);
     h.set_name(hospital_name);
     bool hospital_available = false;
-    for (auto it : *hospitals_in_use)
+    if (!hospitals_in_use->empty())
     {
-      if (h.get_name() == it.get_name())
+      for (auto i = 0; i < hospitals_in_use->size(); ++i)
       {
-        hospital_available = true;
-        break;
+        if (h.get_name() == hospitals_in_use->at(i).get_name())
+        {
+          h.set_id(hospitals_in_use->at(i).get_id());
+          hospital_available = true;
+          break;
+        }
       }
     }
     if (hospital_available)
@@ -236,7 +261,9 @@ void HospitalWindow::on_addBedsButton_pressed()
                                                   utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
                                                   utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
           utility::string_t specialVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
-                                                  utility::conversions::to_string_t("virus")};
+                                                  utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
+                                                  utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
+                                                  utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
 
           for (auto s = 0; s < handleLength; ++s)
           {
@@ -261,10 +288,12 @@ void HospitalWindow::on_addBedsButton_pressed()
           Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
           h.add_bed(b);//add the bed to the hospital
       }
+      std::cout << "In add bed" << std::endl;
       hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
     }
-    else {
-      QMessageBox::information(this,tr("Error"), tr("No hospitals are in use yet, please select hospital"));
-    }
+    std::cout << "Got out of add bed" << std::endl;
+    //else {
+    //  QMessageBox::information(this,tr("Error"), tr("No hospitals are in use yet, please select hospital"));
+  //  }
 
 }
