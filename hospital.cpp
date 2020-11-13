@@ -1,6 +1,49 @@
 #include "hospital.h"
 #include "db_connection.h"
 
+Hospital::Hospital(web::json::value schema) {
+    _name = schema["hospital"].as_string();
+
+    if (schema.has_field("location")) {
+        location.first = schema["location"][0].as_double();
+        location.second = schema["location"][1].as_double();
+    }
+
+    if (schema.has_field("beds")) {
+        web::json::array j_bedarr = schema["beds"].as_array();
+        for (auto & i : j_bedarr) {
+            Bed bed(i);
+            beds.push_back(bed);
+        }
+    }
+
+    if (schema.has_field("patientQueue")) {
+        web::json::array j_patientarr = schema["patientQueue"].as_array();
+        for (auto &i : j_patientarr) {
+            Patient patient(i);
+            patientQueue.push_back(patient);
+        }
+    }
+}
+
+web::json::value Hospital::jsonify() {
+    web::json::value j_hospital;
+    j_hospital["hospital"] = JSTR(_name);
+    j_hospital["location"][0] = location.first;
+    j_hospital["location"][1] = location.second;
+
+    for (int i = 0; i < beds.size(); i++) {
+        j_hospital["beds"][i] = beds[i].jsonify();
+    }
+
+    for (int i = 0; i < patientQueue.size(); i++) {
+        j_hospital["patientQueue"][i] = patientQueue[i].jsonify();
+    }
+
+    return j_hospital;
+}
+
+
 Hospital::Hospital(const std::string & name, std::pair<double, double> loc, int id) {
     _name = name;
     location = loc;
@@ -125,23 +168,6 @@ void Hospital::update(const Hospital & other, std::vector<Patient>& accepted, st
         if (!msgs.empty())
             std::cerr << msgs << std::endl;
     }
-}
-
-web::json::value Hospital::jsonify() {
-    web::json::value j_hospital;
-    j_hospital["hospital"] = JSTR(_name);
-    j_hospital["location"][0] = location.first;
-    j_hospital["location"][1] = location.second;
-
-    for (int i = 0; i < beds.size(); i++) {
-        j_hospital["beds"][i] = beds[i].jsonify();
-    }
-
-    for (int i = 0; i < patientQueue.size(); i++) {
-        j_hospital["patientQueue"][i] = patientQueue[i].jsonify();
-    }
-
-    return j_hospital;
 }
 
 bool Hospital::isMetaAltered() const {

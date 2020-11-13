@@ -13,6 +13,7 @@
 class Hospital {
 public:
     Hospital() = default;
+    explicit Hospital(web::json::value schema);
     explicit Hospital(const std::string & name, std::pair<double, double> loc, int id);
 
     std::string get_name() const;

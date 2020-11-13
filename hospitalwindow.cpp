@@ -61,11 +61,13 @@ void HospitalWindow::getStatus()
   {
     for (auto i= 0 ; i < hospitals_in_use->size();++i)
     {
-      Hospital h;
-      h.set_name(hospitals_in_use->at(i).get_name());
-      h.set_location(hospitals_in_use->at(i).get_location().first, hospitals_in_use->at(i).get_location().second);
+      Hospital h = hospitals_in_use->at(i);
+      //h.set_name(hospitals_in_use->at(i).get_name());
+      //h.set_location(hospitals_in_use->at(i).get_location().first, hospitals_in_use->at(i).get_location().second);
       auto rec = hospitalClient->sendRequest("POST", h.jsonify());
       std::cout << "IN HOSPTIAL CLIENT:  " << rec.serialize() << std::endl;
+      Hospital recHospital(rec);
+      hospitals_in_use->at(i) = recHospital;
     }
   }
   catch(...)
