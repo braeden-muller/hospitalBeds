@@ -224,6 +224,7 @@ void handle_post(const http_request& request) {
 
 Server::Server(const std::string & addr) {
     address = addr;
+    db.getInstance();
     cout << "Starting server at [" << address << "]. Type 'q' to exit." << endl;
     // Begin listening at the specified address and register the two helper functions
     http_listener listener(address);

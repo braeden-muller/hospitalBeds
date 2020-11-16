@@ -13,6 +13,7 @@ public:
      * Creates a new server at the specified address. Can only respond to GETs and POSTs
      * \param addr The URL at which to listen on
      */
+    DBConnection db;
     explicit Server(const std::string & addr);
     ~Server();
 private:
