@@ -50,6 +50,8 @@ void HospitalWindow::generateBedData(void)
     set->append(5); //put data in the set this will be # of patients. 5 is just an arbitrary number chosen by the student
     series->append(set); //append the set to a series
     chart->addSeries(series); //add series to chart
+    chart->setTitleFont(*qFont);
+    chart->setTitle("Sample Data Distribution");
 
 }
 
@@ -133,7 +135,7 @@ void HospitalWindow::on_addHospital_pressed()
        bedSpec[special][count++] = JSTR(name_by_conditions[it]);
     }
     bedSpec[id] = bedCount;
-    ++bedCount;
+    bedCount++;
     //Add one bed upon startup to the hospital
     Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
     if (h.add_bed(b)) //add the bed to the hospital
@@ -291,6 +293,10 @@ void HospitalWindow::on_addBedsButton_pressed()
           h.add_bed(b);//add the bed to the hospital
       }
       std::cout << "In add bed" << std::endl;
+      for (auto i = 0; i < h.get_size(); ++i)
+      {
+        std::cout << "Send ID: " << h.get_bed(i).get_id() << std::endl;
+      }
       hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
     }
     std::cout << "Got out of add bed" << std::endl;
