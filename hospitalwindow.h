@@ -57,6 +57,6 @@ private:
     int beds2Add;
     Client * hospitalClient;
     QTimer * timer;
-    void generateBedData(); //TODO: This function will be generating the bed data
+    void generateBedData(const Hospital h); //TODO: This function will be generating the bed data
 };
 #endif // HOSPITALWINDOW_H

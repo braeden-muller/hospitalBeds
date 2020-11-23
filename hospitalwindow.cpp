@@ -38,21 +38,80 @@ HospitalWindow::~HospitalWindow() {
 }
 
 //Method will be used to generate the bed data and display on the UI chart
-void HospitalWindow::generateBedData(void)
+void HospitalWindow::generateBedData(const Hospital h)
 {
+    //Note that this code uses HW1 as a reference
     //Code that will be used to create a QChart
     QChart *chart = new  QChart(); //create chart
     QBarSeries *series = new QBarSeries(); //create series
+    //LineSeries * lineSeries = new QLineSeries();
     QBarSet *set = new QBarSet("Patients"); //create set for number of patients being treated
     QFont *qFont = new QFont(); //used for setting the fonts of labels and titles if needed
     qFont->setPointSize(4); //arbitrary font size
     set->setLabelFont(*qFont);
-    set->append(5); //put data in the set this will be # of patients. 5 is just an arbitrary number chosen by the student
+    //reinitialize vector each time you get the specials
+    std::vector<int> numForSpecial = {0,0,0,0,0,0,0,0};
+    //Num for special indeces: injury: 0, burn: 1, rationation: 2,
+    //                        psychiatric: 3, respiratory: 4, cardiac: 5, scan: 6
+    for (auto i = 0; i < h.get_size();++i)
+    {
+      std::string special = h.get_bed(i).get_special();
+      if (special.find("injur") != std::string::npos)
+      {
+        numForSpecial[0]++; //increase the bed count in this column
+        set->append(numForSpecial[0]);
+      }
+      if (special.find("burn") != std::string::npos) //bed can have multiple specials
+      {
+        numForSpecial[1]++; //increase the bed count in this column
+        set->append(numForSpecial[0]);
+      }
+      if (special.find("radiat") != std::string::npos) //bed can have multiple specials
+      {
+        numForSpecial[2]++; //increase the bed count in this column
+        set->append(numForSpecial[2]);
+      }
+      if (special.find("psych") != std::string::npos) //bed can have multiple specials
+      {
+        numForSpecial[3]++; //increase the bed count in this column
+        set->append(numForSpecial[3]);
+      }
+      if (special.find("respirat") != std::string::npos) //bed can have multiple specials
+      {
+        numForSpecial[4]++; //increase the bed count in this column
+        set->append(numForSpecial[4]);
+      }
+      if (special.find("cardia") != std::string::npos) //bed can have multiple specials
+      {
+        numForSpecial[5]++; //increase the bed count in this column
+        set->append(numForSpecial[5]);
+      }
+      if (special.find("scan") != std::string::npos) //bed can have multiple specials
+      {
+        numForSpecial[6]++; //increase the bed count in this column
+        set->append(numForSpecial[6]);
+      }
+    }
     series->append(set); //append the set to a series
     chart->addSeries(series); //add series to chart
     chart->setTitleFont(*qFont);
-    chart->setTitle("Sample Data Distribution");
+    chart->setTitle("Hospital Bed Data");
 
+    QBarCategoryAxis *xAxis = new QBarCategoryAxis(); //create x axis
+    QStringList specialsList = (QStringList() << "injury" << "burn" << "radiation"
+                                << "psychiatric" << "respiratory" << "cardiac" << "scan");
+    xAxis->append(specialsList); //append the special list containing each bed to the hospital
+    xAxis->setLabelsAngle(270);
+    chart->addAxis(xAxis, Qt::AlignBottom); //add axis to chart
+    series->attachAxis(xAxis); //attach x axis
+
+    QValueAxis *yAxis = new QValueAxis();
+    yAxis->setRange(0,*std::max_element(numForSpecial.begin(),numForSpecial.end()));
+    qFont->setPointSize(5);
+    yAxis->setLabelsFont(*qFont);
+    chart->addAxis(yAxis, Qt::AlignLeft);
+
+    ui->graphicsView->setChart(chart);
 }
 
 //This method makes a POST request on a polling basis to get the current status
@@ -94,54 +153,53 @@ void HospitalWindow::on_addHospital_pressed()
     h.set_location(location.first, location.second);
     h.set_name(hospital_name);
     //Create all bed specifications for the hospital
-    auto bedSpec = web::json::value::object(); //Initialize all pertinent json objects before making request.
-    utility::string_t id = utility::conversions::to_string_t("id"); //Get Hospital ID
-    utility::string_t isFull = utility::conversions::to_string_t("isFull");
-    utility::string_t timestamp = utility::conversions::to_string_t("timestamp");
-    utility::string_t handles = utility::conversions::to_string_t("handles");
-    utility::string_t special = utility::conversions::to_string_t("special");
-    bedSpec[isFull] = web::json::value(true); //set bed to being full for the initial treated bed
-    auto now = std::chrono::steady_clock::now();
-
-    //update timestamp
-    bedSpec[timestamp] = web::json::value::number(std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count());
-    std::set<condition> addedHandles;
-    std::set<condition> addedSpecials;
-    utility::string_t handleVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
-                                            utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
-                                            utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
-                                            utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
     utility::string_t specialVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
                                             utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
                                             utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
                                             utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
+    for (int i = 0; i < 8; ++i)
+    {
+      auto bedSpec = web::json::value::object(); //Initialize all pertinent json objects before making request.
+      utility::string_t id = utility::conversions::to_string_t("id"); //Get Hospital ID
+      utility::string_t isFull = utility::conversions::to_string_t("isFull");
+      utility::string_t timestamp = utility::conversions::to_string_t("timestamp");
+      utility::string_t handles = utility::conversions::to_string_t("handles");
+      utility::string_t special = utility::conversions::to_string_t("special");
+      bedSpec[isFull] = web::json::value(true); //set bed to being full for the initial treated bed
+      auto now = std::chrono::steady_clock::now();
 
-    for (auto s = 0; s < handleLength; ++s)
-    {
-       addedHandles.emplace(conditions_by_name[handleVector[s]].c);
+      //update timestamp
+      bedSpec[timestamp] = web::json::value::number(std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count());
+      std::set<condition> addedHandles;
+      std::set<condition> addedSpecials;
+      utility::string_t handleVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
+                                              utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
+                                              utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
+                                              utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
+
+
+      for (auto s = 0; s < handleLength; ++s)
+      {
+         addedHandles.emplace(conditions_by_name[handleVector[s]].c);
+      }
+      int count = 0;
+      for (auto it : addedHandles)
+      {
+         bedSpec[handles][count++] = JSTR(name_by_conditions[it]);
+      }
+      addedSpecials.emplace(conditions_by_name[specialVector[i]].c); //change and allow user to input special data
+      count = 0;
+      for (auto it : addedSpecials)
+      {
+         bedSpec[special][count++] = JSTR(name_by_conditions[it]);
+      }
+      bedSpec[id] = bedCount;
+      bedCount++;
+      //Add one bed upon startup to the hospital
+      Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
+      h.add_bed(b);
     }
-    int count = 0;
-    for (auto it : addedHandles)
-    {
-       bedSpec[handles][count++] = JSTR(name_by_conditions[it]);
-    }
-    for (auto s = 0; s < 3; ++s)
-    {
-       addedSpecials.emplace(conditions_by_name[specialVector[s]].c);
-    }
-    count = 0;
-    for (auto it : addedSpecials)
-    {
-       bedSpec[special][count++] = JSTR(name_by_conditions[it]);
-    }
-    bedSpec[id] = bedCount;
-    bedCount++;
-    //Add one bed upon startup to the hospital
-    Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
-    if (h.add_bed(b)) //add the bed to the hospital
-    {
-      hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
-    }
+    hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
     bool hospital_already_added = false;
     if (!hospitals_in_use->empty())
     {
@@ -158,6 +216,7 @@ void HospitalWindow::on_addHospital_pressed()
       hospitalIndex++;
       hospitals_in_use->push_back(h); //add the hospital so it can be polled for data
     }
+  generateBedData(h);
 }
 
 void HospitalWindow::on_Christiansburg_pressed()
