@@ -46,6 +46,22 @@ private slots:
 
     void getStatus();
 
+    void on_injuryCheckbox_stateChanged(int arg1);
+
+    void on_burnCheckbox_stateChanged(int arg1);
+
+    void on_virusCheckbox_stateChanged(int arg1);
+
+    void on_radiationCheckBox_stateChanged(int arg1);
+
+    void on_psychiatricCheckbox_stateChanged(int arg1);
+
+    void on_respiratoryCheckbox_stateChanged(int arg1);
+
+    void on_cardiacCheckbox_stateChanged(int arg1);
+
+    void on_scanCheckbox_stateChanged(int arg1);
+
 private:
     Ui::HospitalWindow *ui;
     std::size_t bedCount;
@@ -54,6 +70,7 @@ private:
     std::vector<Hospital> * hospitals_in_use;
     std::string hospital_name;
     std::pair<double,double> location;
+    std::vector<bool> specialIndeces;
     int beds2Add;
     Client * hospitalClient;
     QTimer * timer;

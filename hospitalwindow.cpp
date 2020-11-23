@@ -1,6 +1,9 @@
 #include "hospitalwindow.h"
 #include "./ui_hospitalwindow.h"
 
+
+//Method: Constructor
+//Purpose: Used to initialize the main hospital window and provide for each input
 HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::HospitalWindow) {
     ui->setupUi(this);
     hospitalClient = new Client();
@@ -16,8 +19,13 @@ HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui
     timer = new QTimer(parent);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(getStatus()));
     timer->start(60000); //time specified in ms, so poll every 1 minute
+
+    //fill the array for special indeces
+    for (auto i = 0; i < 8; ++i)
+        specialIndeces.push_back(false);
 }
 
+//Destructor: Deletes all heap allocated memory
 HospitalWindow::~HospitalWindow() {
     delete ui;
     if (hospitalClient != nullptr)
@@ -51,54 +59,55 @@ void HospitalWindow::generateBedData(const Hospital h)
     set->setLabelFont(*qFont);
     //reinitialize vector each time you get the specials
     std::vector<int> numForSpecial = {0,0,0,0,0,0,0,0};
-    //Num for special indeces: injury: 0, burn: 1, rationation: 2,
+    //Num for special indeces: injury: 0, burn: 1, radiation: 2,
     //                        psychiatric: 3, respiratory: 4, cardiac: 5, scan: 6
     for (auto i = 0; i < h.get_size();++i)
     {
       std::string special = h.get_bed(i).get_special();
+      //std::cout << "Special string is: " << special << std::endl;
       if (special.find("injur") != std::string::npos)
       {
         numForSpecial[0]++; //increase the bed count in this column
-        set->append(numForSpecial[0]);
+
       }
       if (special.find("burn") != std::string::npos) //bed can have multiple specials
       {
         numForSpecial[1]++; //increase the bed count in this column
-        set->append(numForSpecial[0]);
+      }
+      if (special.find("virus") != std::string::npos)
+      {
+          numForSpecial[2]++;
       }
       if (special.find("radiat") != std::string::npos) //bed can have multiple specials
       {
-        numForSpecial[2]++; //increase the bed count in this column
-        set->append(numForSpecial[2]);
+        numForSpecial[3]++; //increase the bed count in this column
       }
       if (special.find("psych") != std::string::npos) //bed can have multiple specials
       {
-        numForSpecial[3]++; //increase the bed count in this column
-        set->append(numForSpecial[3]);
+        numForSpecial[4]++; //increase the bed count in this column
       }
       if (special.find("respirat") != std::string::npos) //bed can have multiple specials
       {
-        numForSpecial[4]++; //increase the bed count in this column
-        set->append(numForSpecial[4]);
-      }
-      if (special.find("cardia") != std::string::npos) //bed can have multiple specials
-      {
         numForSpecial[5]++; //increase the bed count in this column
-        set->append(numForSpecial[5]);
+      }
+      if (special.find("cardi") != std::string::npos) //bed can have multiple specials
+      {
+        numForSpecial[6]++; //increase the bed count in this column
       }
       if (special.find("scan") != std::string::npos) //bed can have multiple specials
       {
-        numForSpecial[6]++; //increase the bed count in this column
-        set->append(numForSpecial[6]);
+        numForSpecial[7]++; //increase the bed count in this column
       }
     }
+    for (auto i = 0; i < numForSpecial.size(); ++i)
+        set->append(numForSpecial[i]);
     series->append(set); //append the set to a series
     chart->addSeries(series); //add series to chart
     chart->setTitleFont(*qFont);
     chart->setTitle("Hospital Bed Data");
 
     QBarCategoryAxis *xAxis = new QBarCategoryAxis(); //create x axis
-    QStringList specialsList = (QStringList() << "injury" << "burn" << "radiation"
+    QStringList specialsList = (QStringList() << "injury" << "burn" << "radiation" << "virus"
                                 << "psychiatric" << "respiratory" << "cardiac" << "scan");
     xAxis->append(specialsList); //append the special list containing each bed to the hospital
     xAxis->setLabelsAngle(270);
@@ -111,7 +120,7 @@ void HospitalWindow::generateBedData(const Hospital h)
     yAxis->setLabelsFont(*qFont);
     chart->addAxis(yAxis, Qt::AlignLeft);
 
-    ui->graphicsView->setChart(chart);
+    ui->graphicsView->setChart(chart); //Update the graphics view
 }
 
 //This method makes a POST request on a polling basis to get the current status
@@ -131,21 +140,14 @@ void HospitalWindow::getStatus()
       hospitals_in_use->at(i) = recHospital;
     }
   }
-  catch(...)
+  catch(...) //If unable to connect to server
   {
     QMessageBox::information(this,tr("Error"), tr("Please start the server."));
   }
 
 }
 
-//TODO: Generate the bar chart
-/*void HospitalWindow::on_hospital_data_pressed()
-{
-    generateBedData();
-}
-*/
-
-
+//Slot to call after the addHospital button is pressed
 void HospitalWindow::on_addHospital_pressed()
 {
     Hospital h; //Create a temp hospital before seeing if it is already in vector
@@ -187,7 +189,19 @@ void HospitalWindow::on_addHospital_pressed()
       {
          bedSpec[handles][count++] = JSTR(name_by_conditions[it]);
       }
-      addedSpecials.emplace(conditions_by_name[specialVector[i]].c); //change and allow user to input special data
+      for (auto s = 0; s < specialIndeces.size(); ++s)
+      {
+          if (specialIndeces[s]) //check if special index has been selected
+          {
+              std::cout << "The index selected is " << s << '\n' << "The name is " << specialVector[s] << std::endl;
+              addedSpecials.emplace(conditions_by_name[specialVector[s]].c);
+          }
+      }
+      if (addedSpecials.empty()){
+          QMessageBox::information(this,tr("Error"), tr("Please enter valid specials for the hospital."));
+          return; //return without sending a request
+      }
+
       count = 0;
       for (auto it : addedSpecials)
       {
@@ -216,39 +230,60 @@ void HospitalWindow::on_addHospital_pressed()
       hospitalIndex++;
       hospitals_in_use->push_back(h); //add the hospital so it can be polled for data
     }
-  generateBedData(h);
+  generateBedData(h); //generates the bed data plot for the given hospital
+  for (auto i = 0; i < specialIndeces.size(); ++i)
+  {
+      specialIndeces[i] = false;
+  }
+
+  //Uncheck all checkboxes so next hospital can be user configured
+  ui->injuryCheckbox->setChecked(Qt::Unchecked);
+  ui->scanCheckbox->setChecked(Qt::Unchecked);
+  ui->radiationCheckBox->setChecked(Qt::Unchecked);
+  ui->cardiacCheckbox->setChecked(Qt::Unchecked);
+  ui->burnCheckbox->setChecked(Qt::Unchecked);
+  ui->virusCheckbox->setChecked(Qt::Unchecked);
+  ui->respiratoryCheckbox->setChecked(Qt::Unchecked);
+  ui->psychiatricCheckbox->setChecked(Qt::Unchecked);
+
 }
 
+//Slot for if christainsburg is Checked
 void HospitalWindow::on_Christiansburg_pressed()
 {
     location = std::make_pair(37.089081, -80.505592);
     hospital_name = "New River Valley Medical Center";
 }
 
+//Slot for if Roanoke is pressed
 void HospitalWindow::on_Roanoke_pressed()
 {
     location = std::make_pair(37.252090, -79.942436);
     hospital_name = "Carilion Roanoke Memorial Hospital";
 }
 
+//Slot for if Lynchburg is pressed
 void HospitalWindow::on_Lynchburg_pressed()
 {
     location = std::make_pair(37.416648, -79.169753);
     hospital_name = "Centra Lynchburg General Hospital";
 }
 
+//Slot for if Princeton is pressed
 void HospitalWindow::on_Princeton_pressed()
 {
     location = std::make_pair(37.363190, -81.113136);
     hospital_name = "Princeton Community Hospital";
 }
 
+//Slot for if Bristol is pressed
 void HospitalWindow::on_Bristol_pressed()
 {
     location = std::make_pair(36.584577,-82.251241);
     hospital_name = "Bristol Regional Medical Center";
 }
 
+//signals to delete a hospital from the database
 void HospitalWindow::on_deleteHospitalButton_pressed()
 {
     Hospital h;
@@ -277,11 +312,13 @@ void HospitalWindow::on_deleteHospitalButton_pressed()
 
 }
 
+//Callback for if the bedSlider is changed
 void HospitalWindow::on_bedSlider_valueChanged(int value)
 {
     beds2Add = value;
 }
 
+//Adds beds to a current hospital
 void HospitalWindow::on_addBedsButton_pressed()
 {
     Hospital h; //Create a temp hospital before seeing if it is already in vector
@@ -358,9 +395,72 @@ void HospitalWindow::on_addBedsButton_pressed()
       }
       hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
     }
-    std::cout << "Got out of add bed" << std::endl;
-    //else {
-    //  QMessageBox::information(this,tr("Error"), tr("No hospitals are in use yet, please select hospital"));
-  //  }
+    //generateBedData(h);s
+    //std::cout << "Got out of add bed" << std::endl; //Debugging statement
+}
 
+
+//The next set of functions are all call backs for each of the checkboxes for when a special value is Checked
+void HospitalWindow::on_injuryCheckbox_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked)
+        specialIndeces[0] = true; //ensure that injury is set to true
+    else
+        specialIndeces[0] = false;
+}
+
+void HospitalWindow::on_burnCheckbox_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked)
+        specialIndeces[1] = true; //ensure that injury is set to true
+    else
+        specialIndeces[1] = false;
+}
+
+void HospitalWindow::on_virusCheckbox_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked)
+        specialIndeces[2] = true; //ensure that injury is set to true
+    else
+        specialIndeces[2] = false;
+}
+
+void HospitalWindow::on_radiationCheckBox_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked)
+        specialIndeces[3] = true; //ensure that injury is set to true
+    else
+        specialIndeces[3] = false;
+}
+
+void HospitalWindow::on_psychiatricCheckbox_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked)
+        specialIndeces[4] = true; //ensure that injury is set to true
+    else
+        specialIndeces[4] = false;
+}
+
+void HospitalWindow::on_respiratoryCheckbox_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked)
+        specialIndeces[5] = true; //ensure that injury is set to true
+    else
+        specialIndeces[5] = false;
+}
+
+void HospitalWindow::on_cardiacCheckbox_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked)
+        specialIndeces[6] = true; //ensure that injury is set to true
+    else
+        specialIndeces[6] = false;
+}
+
+void HospitalWindow::on_scanCheckbox_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked)
+        specialIndeces[7] = true; //ensure that injury is set to true
+    else
+        specialIndeces[7] = false;
 }
