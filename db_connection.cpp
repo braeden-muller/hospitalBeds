@@ -196,8 +196,10 @@ bool DBConnection::updateDatabase(Hospital h, std::string & msgs) {
       if (std::get<1>(hospitals[hIt]).get_name() == h.get_name())
           pID = hIt;
     }
+    std::cout<<"the size of the hospitals data structure is: "<<hospitals.size()<<std::endl;
 
     if (pID == -1) {
+      msgs.append("\nCould not find given hospital, adding new hospital");
         pID = hospitals.size();
         updateStream<<"INSERT INTO hospital(ID,name,location) VALUES("<<pID;
         updateStream<<", \""<<h.get_name();
@@ -205,13 +207,13 @@ bool DBConnection::updateDatabase(Hospital h, std::string & msgs) {
         updateStream<<"\", \""<<std::get<0>(h.get_location());
         updateStream<<", "<<std::get<1>(h.get_location());
         updateStream<<"\")";
-        msgs.append("\n added new hospital");
+        msgs.append("\n\tadded new hospital");
         std::cout<<"\n"<<updateStream.str()<<std::endl;
-        //error = sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
+        error = sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
         registerHospital(h, msgs);
         if (error) {
             error = 0;
-            std::cout<<"Could not add to hospital"<<std::endl;
+            msgs.append("\n\t\tCould not create new hospital");
         }
     }
     pID = 0;
@@ -221,8 +223,23 @@ bool DBConnection::updateDatabase(Hospital h, std::string & msgs) {
         bedID = h.get_bed(i).get_id();
         updateStream.str("");
         updateStream<<"UPDATE bed SET occupied="<<h.get_bed(i).get_full()<<" WHERE ID="<<bedID;
-        std::cout<<updateStream.str()<<std::endl;
+        //std::cout<<updateStream.str()<<std::endl;
         error = sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
+
+        updateStream.str("");
+        updateStream<<"UPDATE bed SET handles=\""<<h.get_bed(i).get_handles()<<"\" WHERE ID="<<bedID;
+        //std::cout<<updateStream.str()<<std::endl;
+        error |= sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
+	
+        updateStream.str("");	
+        updateStream<<"UPDATE bed SET specialties=\""<<h.get_bed(i).get_special()<<"\" WHERE ID="<<bedID;
+        //std::cout<<updateStream.str()<<std::endl;
+        error |= sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
+	
+        updateStream.str("");	
+        updateStream<<"UPDATE bed SET timestamp=\""<<h.get_bed(i).get_timestamp()<<"\" WHERE ID="<<bedID;
+        //std::cout<<updateStream.str()<<std::endl;
+        error |= sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
 
         if (error) {
             error = 0;
@@ -241,11 +258,9 @@ bool DBConnection::updateDatabase(Hospital h, std::string & msgs) {
             if (error) {
                 msgs.append("\n\t something went wrong with the insertion of this bed");
             }
-            //sqlite3_close(db);
-            // return false;
         }
         updateStream.clear();
     }
-    std::cout<<"successfully updated hospital"<<std::endl;
+    msgs.append("\nsuccessfully updated hospital");
     return true;
 }
