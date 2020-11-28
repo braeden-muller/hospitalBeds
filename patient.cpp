@@ -5,7 +5,14 @@
 std::string makeUUID() {
     uuid_t id;
     uuid_generate(id);
-    std::string __id(reinterpret_cast<const char *>(id));
+    char pak[32] = {};
+    char* pak_s = pak;
+    for (unsigned char c : id) {
+        uint8_t pak1 = c & 0x00ffu;
+        sprintf(pak_s, "%x", pak1);
+        pak_s += 2;
+    }
+    std::string __id(pak);
     return __id;
 }
 

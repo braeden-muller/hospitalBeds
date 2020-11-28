@@ -140,8 +140,9 @@ void HospitalWindow::getStatus()
       hospitals_in_use->at(i) = recHospital;
     }
   }
-  catch(...) //If unable to connect to server
+  catch(std::exception& e) //If unable to connect to server
   {
+      std::cout << e.what() << std::endl;
     QMessageBox::information(this,tr("Error"), tr("Please start the server."));
   }
 
