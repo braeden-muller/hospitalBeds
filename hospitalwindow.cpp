@@ -14,7 +14,7 @@ HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui
     location = std::make_pair(0.0,0.0); //just give default location of 0,0
     start = std::chrono::steady_clock::now();
     beds2Add = 1;
-
+    ui->beds_count_edit->setText(QString::number(0));
     //Poll for hospitals data
     timer = new QTimer(parent);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(getStatus()));
@@ -61,40 +61,50 @@ void HospitalWindow::generateBedData(const Hospital h)
     std::vector<int> numForSpecial = {0,0,0,0,0,0,0,0};
     //Num for special indeces: injury: 0, burn: 1, radiation: 2,
     //                        psychiatric: 3, respiratory: 4, cardiac: 5, scan: 6
+    qDebug() << "The size of the hospital";
+    qDebug() << h.get_size();
+    qDebug() << "Is this correct?";
     for (auto i = 0; i < h.get_size();++i)
     {
       std::string special = h.get_bed(i).get_special(); //get the special for each bed
-      if (special.find("injur") != std::string::npos)
+      qDebug() << "The special is: ";
+      qDebug() << QString::fromLocal8Bit(special.c_str());
+      qDebug() << special.length();
+      qDebug() << "Is this ok?";
+      if (special.length() > 3)
       {
-        numForSpecial[0]++; //increase the bed count in this column
-      }
-      if (special.find("burn") != std::string::npos) //bed can have multiple specials
-      {
-        numForSpecial[1]++; //increase the bed count in this column
-      }
-      if (special.find("virus") != std::string::npos)
-      {
-        numForSpecial[2]++;
-      }
-      if (special.find("radiat") != std::string::npos) //bed can have multiple specials
-      {
-        numForSpecial[3]++; //increase the bed count in this column
-      }
-      if (special.find("psych") != std::string::npos) //bed can have multiple specials
-      {
-        numForSpecial[4]++; //increase the bed count in this column
-      }
-      if (special.find("respirat") != std::string::npos) //bed can have multiple specials
-      {
-        numForSpecial[5]++; //increase the bed count in this column
-      }
-      if (special.find("cardi") != std::string::npos) //bed can have multiple specials
-      {
-        numForSpecial[6]++; //increase the bed count in this column
-      }
-      if (special.find("scan") != std::string::npos) //bed can have multiple specials
-      {
-        numForSpecial[7]++; //increase the bed count in this column
+        if (special.find("injur") != std::string::npos)
+        {
+          numForSpecial[0]++; //increase the bed count in this column
+        }
+        if (special.find("burn") != std::string::npos) //bed can have multiple specials
+        {
+          numForSpecial[1]++; //increase the bed count in this column
+        }
+        if (special.find("virus") != std::string::npos)
+        {
+          numForSpecial[2]++;
+        }
+        if (special.find("radiat") != std::string::npos) //bed can have multiple specials
+        {
+          numForSpecial[3]++; //increase the bed count in this column
+        }
+        if (special.find("psych") != std::string::npos) //bed can have multiple specials
+        {
+          numForSpecial[4]++; //increase the bed count in this column
+        }
+        if (special.find("respirat") != std::string::npos) //bed can have multiple specials
+        {
+          numForSpecial[5]++; //increase the bed count in this column
+        }
+        if (special.find("cardi") != std::string::npos) //bed can have multiple specials
+        {
+          numForSpecial[6]++; //increase the bed count in this column
+        }
+        if (special.find("scan") != std::string::npos) //bed can have multiple specials
+        {
+          numForSpecial[7]++; //increase the bed count in this column
+        }
       }
     }
     for (auto i = 0; i < numForSpecial.size(); ++i)
@@ -317,6 +327,8 @@ void HospitalWindow::on_deleteHospitalButton_pressed()
 void HospitalWindow::on_bedSlider_valueChanged(int value)
 {
     beds2Add = value;
+    ui->beds_count_edit->clear();
+    ui->beds_count_edit->setText(QString::number(value));
 }
 
 //Adds beds to a current hospital
@@ -341,7 +353,13 @@ void HospitalWindow::on_addBedsButton_pressed()
     }
     if (hospital_available)
     {
+      qDebug() << "The hospital is available";
+      qDebug() << beds2Add;
       //Create all bed specifications for the hospital
+      utility::string_t specialVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
+                                              utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
+                                              utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
+                                              utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
       for (auto i = 0; i < beds2Add; ++i)
       {
           auto bedSpec = web::json::value::object(); //Initialize all pertinent json objects before making request.
@@ -361,11 +379,6 @@ void HospitalWindow::on_addBedsButton_pressed()
                                                   utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
                                                   utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
                                                   utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
-          utility::string_t specialVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
-                                                  utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
-                                                  utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
-                                                  utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
-
           for (auto s = 0; s < handleLength; ++s)
           {
              addedHandles.emplace(conditions_by_name[handleVector[s]].c);
@@ -375,21 +388,38 @@ void HospitalWindow::on_addBedsButton_pressed()
           {
              bedSpec[handles][count++] = JSTR(name_by_conditions[it]);
           }
-          for (auto s = 0; s < 3; ++s)
+          //add in all necessary specials
+          for (auto s = 0; s < specialIndeces.size(); ++s)
           {
-             addedSpecials.emplace(conditions_by_name[specialVector[s]].c);
+              if (specialIndeces[s]) //check if special index has been selected
+              {
+                  qDebug() << "This special was emplaced";
+                  qDebug() << s;
+                  addedSpecials.emplace(conditions_by_name[specialVector[s]].c);
+              }
           }
+
+          //if the specials are not selected for a bed, display an error message
+          if (addedSpecials.empty())
+          {
+              QMessageBox::information(this,tr("Error"), tr("Please enter valid specials for the hospital."));
+              return; //return without sending a request
+          }
+
           count = 0;
           for (auto it : addedSpecials)
           {
              bedSpec[special][count++] = JSTR(name_by_conditions[it]);
           }
+
           bedSpec[id] = bedCount;
           ++bedCount;
           Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
           h.add_bed(b);//add the bed to the hospital
       }
-      //  std::cout << "In add bed" << std::endl;
+      for (auto i = 0; i < h.get_size(); ++i) {
+        std::cout << h.get_bed(i).get_special() << '\t' << "SPECIAL" << std::endl;
+      }
       hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
     }
     generateBedData(h); //gemerate the bed data from the hospital
