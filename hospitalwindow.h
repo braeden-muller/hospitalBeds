@@ -63,6 +63,7 @@ private slots:
     void on_scanCheckbox_stateChanged(int arg1);
 
 private:
+
     Ui::HospitalWindow *ui;
     std::size_t bedCount;
     int hospitalIndex;
@@ -74,6 +75,8 @@ private:
     int beds2Add;
     Client * hospitalClient;
     QTimer * timer;
-    void generateBedData(const Hospital h); //TODO: This function will be generating the bed data
+    void generateBedData(const Hospital h);
+    void uncheck();
+    
 };
 #endif // HOSPITALWINDOW_H

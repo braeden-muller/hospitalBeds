@@ -10,7 +10,6 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     ui->setupUi(this);
     //7 Special Symptoms for the Doctor to Choose From
     //Right now there are 5 hospital locations for our clients in SWVA
-    patientId = 0;
     //Go ahead and set the placeholder text in the latitude and longitude text boxes
     ui->latitudeLineEdit->setPlaceholderText("37.18");
     ui->longitudeLineEdit->setPlaceholderText("-80.53");
@@ -217,7 +216,6 @@ void DoctorWindow::on_latitudeLineEdit_textChanged(const QString &arg1)
 void DoctorWindow::on_longitudeLineEdit_textChanged(const QString &arg1)
 {
     //Get the QString and map it to a double
-    //TODO: In the hospital window work on a location determinator function
     longitude = arg1.toDouble();
 
     //Force the longitude to be in the desired in the area
@@ -256,7 +254,6 @@ void DoctorWindow::getStatus()
     std::string accepted_ids = "Accepted IDs: \n";
     for (auto &a : arr)
     {
-      std::cout << "In here" << std::endl;
       Patient p(a["patient"]);
       temp.push_back(p);
     }
@@ -268,9 +265,9 @@ void DoctorWindow::getStatus()
       {
         //See if a decision has been made on the patient by looping through and chekcing
         //all untreated patients ids.
-        std::cout << "In untreated patients" << std::endl;
-        std::cout << a.get_assigned_hospital() << std::endl;
-        if (a.get_assigned_hospital() != "NONE" && a.get_id() == untreated_patients->at(i).get_id())
+        std::cout << "In here " << std::endl;
+        std::cout << untreated_patients->at(i).get_id();
+        if (a.get_id() == untreated_patients->at(i).get_id())
         {
           std::cout << "Found one" << std::endl;
           treated = i;
@@ -293,6 +290,7 @@ void DoctorWindow::getStatus()
       }
     }
     //Dumb conversion to const char * for compilation purposes.
+    std::cout << "Denied: " << denied_ids << '\n' << "Accepted: " << accepted_ids << std::endl;
     std::string output = denied_ids + accepted_ids;
     const char * msg = output.c_str();
     QMessageBox::information(this,tr("Patient Statuses"), tr(msg));
@@ -302,6 +300,4 @@ void DoctorWindow::getStatus()
      std::cout << e.what() << std::endl;
      QMessageBox::information(this,tr("Error"), tr("Please start the server."));
    }
-
-
 }

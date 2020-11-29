@@ -61,7 +61,6 @@ private:
     QTimer * timer;
     double latitude;
     double longitude;
-    std::size_t patientId;
     std::vector<utility::string_t> ailmentVector;
     std::vector<std::string> * patient_ids;
     std::vector<Patient> * untreated_patients;
