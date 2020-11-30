@@ -18,7 +18,7 @@ HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui
     //Poll for hospitals data
     timer = new QTimer(parent);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(getStatus()));
-    timer->start(60000); //time specified in ms, so poll every 1 minute
+    timer->start(30000); //time specified in ms, so poll every 1 minute
 
     //fill the array for special indeces
     for (auto i = 0; i < 8; ++i)
@@ -142,12 +142,10 @@ void HospitalWindow::getStatus()
     for (auto i= 0 ; i < hospitals_in_use->size();++i)
     {
       Hospital h = hospitals_in_use->at(i);
-      //h.set_name(hospitals_in_use->at(i).get_name());
-      //h.set_location(hospitals_in_use->at(i).get_location().first, hospitals_in_use->at(i).get_location().second);
       auto rec = hospitalClient->sendRequest("POST", h.jsonify());
-      std::cout << "IN HOSPTIAL CLIENT:  " << rec.serialize() << std::endl;
       Hospital recHospital(rec);
       hospitals_in_use->at(i) = recHospital;
+      QMessageBox::information(this,tr("Msg"), tr("The hospital has patients being treated"));
     }
   }
   catch(std::exception& e) //If unable to connect to server
@@ -248,11 +246,6 @@ void HospitalWindow::on_addHospital_pressed()
       hospitals_in_use->push_back(h); //add the hospital so it can be polled for data
     }
   generateBedData(h); //generates the bed data plot for the given hospital
-  for (auto i = 0; i < specialIndeces.size(); ++i)
-  {
-      specialIndeces[i] = false;
-  }
-
   uncheck();
 }
 
@@ -353,8 +346,6 @@ void HospitalWindow::on_addBedsButton_pressed()
     }
     if (hospital_available)
     {
-      qDebug() << "The hospital is available";
-      qDebug() << beds2Add;
       //Create all bed specifications for the hospital
       utility::string_t specialVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
                                               utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
@@ -393,8 +384,6 @@ void HospitalWindow::on_addBedsButton_pressed()
           {
               if (specialIndeces[s]) //check if special index has been selected
               {
-                  qDebug() << "This special was emplaced";
-                  qDebug() << s;
                   addedSpecials.emplace(conditions_by_name[specialVector[s]].c);
               }
           }
@@ -414,17 +403,13 @@ void HospitalWindow::on_addBedsButton_pressed()
 
           bedSpec[id] = bedCount;
           ++bedCount;
-          std::cout << bedSpec << '\t' << "BedSpec" <<std::endl;
           Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
-          qDebug() << "The special for this bed is";
-          std::cout << b.get_special() << std::endl;
           h.add_bed(b);//add the bed to the hospital
 
       }
-      std::cout << h.jsonify() << std::endl;
-      std::cout << h.get_size() << '\t' << "SIZE BEFORE POST" << '\n';
       generateBedData(h);
       hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
+      uncheck();
     }
 
 }

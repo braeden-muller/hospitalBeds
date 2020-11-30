@@ -244,9 +244,8 @@ void DoctorWindow::getStatus()
    }
    try
    {
-     auto r = doctorClient->sendRequest("POST", j_patient_status);
-     for (int i = 0; i < 100000; ++i); //Kill me now
-
+    auto r = doctorClient->sendRequest("POST", j_patient_status);
+    for (int i = 0; i < 100000; ++i); //Kill me now
     web::json::value test = r;
     auto arr = test.as_array();
     std::vector<Patient> temp;
@@ -265,11 +264,8 @@ void DoctorWindow::getStatus()
       {
         //See if a decision has been made on the patient by looping through and chekcing
         //all untreated patients ids.
-        std::cout << "In here " << std::endl;
-        std::cout << untreated_patients->at(i).get_id();
         if (a.get_id() == untreated_patients->at(i).get_id())
         {
-          std::cout << "Found one" << std::endl;
           treated = i;
           //If declined push into denied ids vector.
           if (a.get_assigned_hospital() == "DECLINED")
@@ -289,15 +285,12 @@ void DoctorWindow::getStatus()
         untreated_patients->erase(untreated_patients->begin() + treated);
       }
     }
-    //Dumb conversion to const char * for compilation purposes.
-    std::cout << "Denied: " << denied_ids << '\n' << "Accepted: " << accepted_ids << std::endl;
     std::string output = denied_ids + accepted_ids;
     const char * msg = output.c_str();
     QMessageBox::information(this,tr("Patient Statuses"), tr(msg));
    }
    catch(std::exception& e)
    {
-     std::cout << e.what() << std::endl;
-     QMessageBox::information(this,tr("Error"), tr("Please start the server."));
+     QMessageBox::information(this,tr("Error"), tr(e.what()));
    }
 }
