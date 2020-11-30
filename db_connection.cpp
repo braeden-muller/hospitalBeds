@@ -223,22 +223,22 @@ bool DBConnection::updateDatabase(Hospital h, std::string & msgs) {
         bedID = h.get_bed(i).get_id();
         updateStream.str("");
         updateStream<<"UPDATE bed SET occupied="<<h.get_bed(i).get_full()<<" WHERE ID="<<bedID;
-        //std::cout<<updateStream.str()<<std::endl;
+        std::cout<<updateStream.str()<<std::endl;
         error = sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
 
         updateStream.str("");
         updateStream<<"UPDATE bed SET handles=\""<<h.get_bed(i).get_handles()<<"\" WHERE ID="<<bedID;
-        //std::cout<<updateStream.str()<<std::endl;
+        std::cout<<updateStream.str()<<std::endl;
         error |= sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
 	
         updateStream.str("");	
         updateStream<<"UPDATE bed SET specialties=\""<<h.get_bed(i).get_special()<<"\" WHERE ID="<<bedID;
-        //std::cout<<updateStream.str()<<std::endl;
+        std::cout<<updateStream.str()<<std::endl;
         error |= sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
 	
         updateStream.str("");	
         updateStream<<"UPDATE bed SET timestamp=\""<<h.get_bed(i).get_timestamp()<<"\" WHERE ID="<<bedID;
-        //std::cout<<updateStream.str()<<std::endl;
+        std::cout<<updateStream.str()<<std::endl;
         error |= sqlite3_exec(db, const_cast<char*>(updateStream.str().c_str()), NULL, this, &zerrMsg);
 
         if (error) {
