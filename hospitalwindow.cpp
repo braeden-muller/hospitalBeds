@@ -417,9 +417,6 @@ void HospitalWindow::on_addBedsButton_pressed()
           Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
           h.add_bed(b);//add the bed to the hospital
       }
-      for (auto i = 0; i < h.get_size(); ++i) {
-        std::cout << h.get_bed(i).get_special() << '\t' << "SPECIAL" << std::endl;
-      }
       hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
     }
     generateBedData(h); //gemerate the bed data from the hospital
