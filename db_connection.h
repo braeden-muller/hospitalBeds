@@ -12,6 +12,7 @@
 
 /*!
  * \brief Singleton database connection abstraction
+ * Authors: Matt Lamb
  */
 class DBConnection {
 private:
@@ -27,8 +28,11 @@ public:
      */
     static DBConnection* getInstance();
 
+    /*!
+     * \return A vector containing all hospital information currently in the database
+     */
     std::vector<std::tuple<std::size_t, Hospital,bool>>* getHospitals();
-  
+
     /*!
      * Frees the memory related to the database connection
      */
@@ -94,7 +98,4 @@ public:
      * \return true if successful, false otherwise
      */
     static int C_Callback(void *data, int argc, char **argv, char **columns);
-
-
-
 #endif //HOSPITALBEDS_DB_CONNECTION_H

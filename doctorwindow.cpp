@@ -3,9 +3,7 @@
 #include <typeinfo>
 #include <iostream>
 
-//Method: Constructor
-//Purpose: This is the default for the Doctor Window it is responsible for setting all added widgets
-// to their default values along with initializing all private variables.
+
 DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::DoctorWindow) {
     ui->setupUi(this);
     //7 Special Symptoms for the Doctor to Choose From
@@ -23,9 +21,6 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     doctorClient = new Client(); //Create a client so the doctor can send POST requests via (REST)
 }
 
-//Method: destructor
-//Purpose: Cleaning up all allocated memory on the heap. Including the client pointer and hospital
-// pointer.
 DoctorWindow::~DoctorWindow() {
     delete ui;
     if (doctorClient != nullptr)
@@ -50,10 +45,6 @@ DoctorWindow::~DoctorWindow() {
     }
 }
 
-//Method: on_requestBed_pressed
-//Purpose: To serve as the callback function for when the doctor requests a bed. It creates a new bed and
-// then sees if the hospital it desires is registered or not. If the hospital is registered it assigns the bed
-// to the hospital, if not it registers a new hospital within the database.
 void DoctorWindow::on_requestBed_pressed()
 {
     Patient p;
@@ -82,7 +73,6 @@ void DoctorWindow::on_requestBed_pressed()
     clear_checkboxes();
 }
 
-//This method will clear the checkboxes from the doctor ui.
 void DoctorWindow::clear_checkboxes(void)
 {
   ailmentVector.clear();
@@ -95,7 +85,6 @@ void DoctorWindow::clear_checkboxes(void)
   ui->cardiac_checkbox->setChecked(Qt::Unchecked);
 }
 
-//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_injury_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -109,7 +98,6 @@ void DoctorWindow::on_injury_checkbox_stateChanged(int arg1)
   }
 }
 
-//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_burn_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -123,7 +111,6 @@ void DoctorWindow::on_burn_checkbox_stateChanged(int arg1)
   }
 }
 
-//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_virus_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -137,7 +124,6 @@ void DoctorWindow::on_virus_checkbox_stateChanged(int arg1)
   }
 }
 
-//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_radiation_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -151,7 +137,6 @@ void DoctorWindow::on_radiation_checkbox_stateChanged(int arg1)
   }
 }
 
-//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_scan_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -165,7 +150,6 @@ void DoctorWindow::on_scan_checkbox_stateChanged(int arg1)
   }
 }
 
-//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_respiratory_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -179,7 +163,6 @@ void DoctorWindow::on_respiratory_checkbox_stateChanged(int arg1)
   }
 }
 
-//Callback function to update ailment on change of the checkbox
 void DoctorWindow::on_cardiac_checkbox_stateChanged(int arg1)
 {
   if (arg1 == Qt::Checked)
@@ -193,7 +176,6 @@ void DoctorWindow::on_cardiac_checkbox_stateChanged(int arg1)
   }
 }
 
-//This latitude will be the players latitude that is sent to the server
 void DoctorWindow::on_latitudeLineEdit_textChanged(const QString &arg1)
 {
     //Get the QString and map it to a double
@@ -212,7 +194,6 @@ void DoctorWindow::on_latitudeLineEdit_textChanged(const QString &arg1)
     }
 }
 
-//This longitude will be the players longitude that is sent to the server
 void DoctorWindow::on_longitudeLineEdit_textChanged(const QString &arg1)
 {
     //Get the QString and map it to a double
@@ -231,7 +212,6 @@ void DoctorWindow::on_longitudeLineEdit_textChanged(const QString &arg1)
     }
 }
 
-//This method will display in a QDialog Box the number of patients that have been treated
 void DoctorWindow::getStatus()
 {
    std::stringstream ss;

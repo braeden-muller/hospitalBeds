@@ -6,10 +6,10 @@ using namespace web;
 using namespace web::http;
 using namespace web::http::client;
 
-/*Sources Used
-* https://mariusbancila.ro/blog/2017/11/19/revisited-full-fledged-client-server-example-with-c-rest-sdk-2-10/
-* https://mariusbancila.ro/blog/2013/08/19/full-fledged-client-server-example-with-cpprest-sdk-110/
-*/
+/* Sources Used for Code Reference (Charles Ranson)
+ * https://mariusbancila.ro/blog/2017/11/19/revisited-full-fledged-client-server-example-with-c-rest-sdk-2-10/
+ * https://mariusbancila.ro/blog/2013/08/19/full-fledged-client-server-example-with-cpprest-sdk-110/
+ */
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -58,17 +58,12 @@ void make_request(http_client & client, const method& mtd, json::value const & j
       .wait();
 }
 
-//Set up at localhost with port 8080 for proper communication
 Client::Client()
 {
-   client = new http_client("http://localhost:8080");
+    // Set up at localhost with port 8080 for proper communication
+    client = new http_client("http://localhost:8080");
 }
 
-/*!
- * \brief Sends request to the server in the form of a post (all that is needed for now, GET is used for debug)
- * \param client command used to determine the type of commmand
- * \param hospital JSON value to be sent to the server
- */
 web::json::value Client::sendRequest(const std::string& command, const web::json::value& hospital)
 {
    if (command == "POST")

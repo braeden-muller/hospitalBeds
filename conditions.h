@@ -1,12 +1,9 @@
-//
-// Created by bmuller on 10/23/20.
-//
-
 #ifndef HOSPITALBEDS_CONDITIONS_H
 #define HOSPITALBEDS_CONDITIONS_H
 
 /*!
  * A condition represents a distinct capability a bed has
+ * Authors: Braeden Muller
  */
 enum condition {
     burn,
@@ -56,6 +53,10 @@ static auto name_by_conditions = []{ // NOLINT(cert-err58-cpp)
     return m;
 }();
 
+
+/*!
+ * Interprets conditions from incoming json and inserts them into a set receptacle if they are valid
+ */
 static void addConditions(std::set<condition> * receptacle, const web::json::value & j_conditions) {
     // We know the incoming j_conditions is an array of strings, but right now it is just a json::value
     // Cast the incoming value as an array of json values

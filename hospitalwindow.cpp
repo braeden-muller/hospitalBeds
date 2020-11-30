@@ -1,9 +1,6 @@
 #include "hospitalwindow.h"
 #include "./ui_hospitalwindow.h"
 
-
-//Method: Constructor
-//Purpose: Used to initialize the main hospital window and provide for each input
 HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::HospitalWindow) {
     ui->setupUi(this);
     hospitalClient = new Client();
@@ -25,7 +22,6 @@ HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui
         specialIndeces.push_back(false);
 }
 
-//Destructor: Deletes all heap allocated memory
 HospitalWindow::~HospitalWindow()
 {
     delete ui;
@@ -46,7 +42,6 @@ HospitalWindow::~HospitalWindow()
     }
 }
 
-//Method will be used to generate the bed data and display on the UI chart
 void HospitalWindow::generateBedData(const Hospital h)
 {
     //Note that this code uses HW1 as a reference
@@ -133,8 +128,6 @@ void HospitalWindow::generateBedData(const Hospital h)
     ui->graphicsView->setChart(chart); //Update the graphics view
 }
 
-//This method makes a POST request on a polling basis to get the current status
-//of hospitals for plotting purposes
 void HospitalWindow::getStatus()
 {
   try
@@ -156,7 +149,6 @@ void HospitalWindow::getStatus()
 
 }
 
-//Slot to call after the addHospital button is pressed
 void HospitalWindow::on_addHospital_pressed()
 {
     Hospital h; //Create a temp hospital before seeing if it is already in vector
@@ -249,42 +241,36 @@ void HospitalWindow::on_addHospital_pressed()
   uncheck();
 }
 
-//Slot for if christainsburg is Checked
 void HospitalWindow::on_Christiansburg_pressed()
 {
     location = std::make_pair(37.089081, -80.505592);
     hospital_name = "New River Valley Medical Center";
 }
 
-//Slot for if Roanoke is pressed
 void HospitalWindow::on_Roanoke_pressed()
 {
     location = std::make_pair(37.252090, -79.942436);
     hospital_name = "Carilion Roanoke Memorial Hospital";
 }
 
-//Slot for if Lynchburg is pressed
 void HospitalWindow::on_Lynchburg_pressed()
 {
     location = std::make_pair(37.416648, -79.169753);
     hospital_name = "Centra Lynchburg General Hospital";
 }
 
-//Slot for if Princeton is pressed
 void HospitalWindow::on_Princeton_pressed()
 {
     location = std::make_pair(37.363190, -81.113136);
     hospital_name = "Princeton Community Hospital";
 }
 
-//Slot for if Bristol is pressed
 void HospitalWindow::on_Bristol_pressed()
 {
     location = std::make_pair(36.584577,-82.251241);
     hospital_name = "Bristol Regional Medical Center";
 }
 
-//signals to delete a hospital from the database
 void HospitalWindow::on_deleteHospitalButton_pressed()
 {
     Hospital h;
@@ -316,7 +302,6 @@ void HospitalWindow::on_deleteHospitalButton_pressed()
 
 }
 
-//Callback for if the bedSlider is changed
 void HospitalWindow::on_bedSlider_valueChanged(int value)
 {
     beds2Add = value;
@@ -324,7 +309,7 @@ void HospitalWindow::on_bedSlider_valueChanged(int value)
     ui->beds_count_edit->setText(QString::number(value));
 }
 
-//Adds beds to a current hospital
+
 void HospitalWindow::on_addBedsButton_pressed()
 {
     Hospital h; //Create a temp hospital before seeing if it is already in vector
@@ -414,8 +399,6 @@ void HospitalWindow::on_addBedsButton_pressed()
 
 }
 
-
-//The next set of functions are all call backs for each of the checkboxes for when a special value is Checked
 void HospitalWindow::on_injuryCheckbox_stateChanged(int arg1)
 {
     specialIndeces[0] = (arg1 == Qt::Checked) ? true : false;

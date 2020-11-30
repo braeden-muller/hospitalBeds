@@ -6,6 +6,7 @@
 
 /*!
  * The server manages outside connections and the internal database
+ * Authors: Braeden Muller
  */
 class Server {
 public:
@@ -14,10 +15,11 @@ public:
      * \param addr The URL at which to listen on
      */
     DBConnection db;
+    /// Creates a server that binds to the given address
     explicit Server(const std::string & addr);
     ~Server();
 private:
-    std::string address;
+    std::string address; // The address this server is listening on
 };
 
 

@@ -81,6 +81,11 @@ static std::map<std::string, Patient> patients;
 
 class value;
 
+/*!
+ * Finds the best hospital for a patient that has not already been attempted for
+ * the patient. Prioritzes close hospitals that specialize in the conditions
+ * that the patient has.
+ */
 void routePatient(Patient& patient) {
     double highest = 0;
     Hospital * bestHospital = nullptr;
@@ -93,6 +98,7 @@ void routePatient(Patient& patient) {
         }
     }
 
+    // If no fitting hospital is found, then the doctor should be notified
     if (!bestHospital)
         patient.set_assigned_hospital("DECLINED");
     else

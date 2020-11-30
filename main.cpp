@@ -12,6 +12,7 @@
  * \param argc Argument count
  * \param argv Arguments. Please specify operating mode.
  * \return Exit status
+ * Authors: Braeden Muller
  */
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
