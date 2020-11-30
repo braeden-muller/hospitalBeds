@@ -71,7 +71,7 @@ void HospitalWindow::generateBedData(const Hospital h)
       qDebug() << QString::fromLocal8Bit(special.c_str());
       qDebug() << special.length();
       qDebug() << "Is this ok?";
-      if (special.length() > 3)
+      if (special.length() > 3 && special.length() < 100)
       {
         if (special.find("injur") != std::string::npos)
         {
@@ -83,11 +83,11 @@ void HospitalWindow::generateBedData(const Hospital h)
         }
         if (special.find("virus") != std::string::npos)
         {
-          numForSpecial[2]++;
+          numForSpecial[3]++;
         }
         if (special.find("radiat") != std::string::npos) //bed can have multiple specials
         {
-          numForSpecial[3]++; //increase the bed count in this column
+          numForSpecial[2]++; //increase the bed count in this column
         }
         if (special.find("psych") != std::string::npos) //bed can have multiple specials
         {
@@ -415,11 +415,17 @@ void HospitalWindow::on_addBedsButton_pressed()
           bedSpec[id] = bedCount;
           ++bedCount;
           Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
+          qDebug() << "The special for this bed is";
+          std::cout << b.get_special() << std::endl;
           h.add_bed(b);//add the bed to the hospital
+        //  generateBedData(h);
       }
+      std::cout << h.jsonify() << std::endl;
+      std::cout << h.get_size() << '\t' << "SIZE BEFORE POST" << '\n';
+       //gemerate the bed data from the hospital
       hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
     }
-    generateBedData(h); //gemerate the bed data from the hospital
+
 }
 
 
@@ -475,4 +481,6 @@ void HospitalWindow::uncheck()
   ui->virusCheckbox->setChecked(Qt::Unchecked);
   ui->respiratoryCheckbox->setChecked(Qt::Unchecked);
   ui->psychiatricCheckbox->setChecked(Qt::Unchecked);
+  for (auto i = 0; i < specialIndeces.size();++i)
+    specialIndeces[i] = false; //set back to false
 }
