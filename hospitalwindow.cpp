@@ -414,15 +414,16 @@ void HospitalWindow::on_addBedsButton_pressed()
 
           bedSpec[id] = bedCount;
           ++bedCount;
+          std::cout << bedSpec << '\t' << "BedSpec" <<std::endl;
           Bed b(bedSpec); //create a new bed with all parameters from bedSpec json object
           qDebug() << "The special for this bed is";
           std::cout << b.get_special() << std::endl;
           h.add_bed(b);//add the bed to the hospital
-        //  generateBedData(h);
+
       }
       std::cout << h.jsonify() << std::endl;
       std::cout << h.get_size() << '\t' << "SIZE BEFORE POST" << '\n';
-       //gemerate the bed data from the hospital
+      generateBedData(h);
       hospitalClient->sendRequest("POST", h.jsonify()); //send the post request
     }
 
