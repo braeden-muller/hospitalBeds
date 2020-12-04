@@ -72,7 +72,7 @@ web::json::value Client::sendRequest(const std::string& command, const web::json
    }
    else if (command == "DELETE")
    {
-      make_request(*client, methods::DEL, hospital);
+      make_request(*client, methods::DEL, hospital); 
    }
    return body;
 }

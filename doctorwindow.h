@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QTimer>
 #include <QMessageBox>
+#include <thread>
 #include <cpprest/http_listener.h>
 #include "client.h"
 #include "hospital.h"
@@ -79,5 +80,8 @@ private:
     std::vector<Patient> * untreated_patients; // Patients waiting on a hospital
     /// This method will clear the checkboxes from the doctor ui.
     void clear_checkboxes(void);
+    /// This values sends a request to the server to get patient Statuses
+    void makeRequest(web::json::value &reply, web::json::value &status);
+    
 };
 #endif // DOCTORWINDOW_H

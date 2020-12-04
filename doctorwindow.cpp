@@ -4,7 +4,8 @@
 #include <iostream>
 
 
-DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::DoctorWindow) {
+DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::DoctorWindow)
+{
     ui->setupUi(this);
     //7 Special Symptoms for the Doctor to Choose From
     //Right now there are 5 hospital locations for our clients in SWVA
@@ -21,7 +22,8 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     doctorClient = new Client(); //Create a client so the doctor can send POST requests via (REST)
 }
 
-DoctorWindow::~DoctorWindow() {
+DoctorWindow::~DoctorWindow()
+{
     delete ui;
     if (doctorClient != nullptr)
     {
@@ -49,13 +51,12 @@ void DoctorWindow::on_requestBed_pressed()
 {
     Patient p;
     p.set_location(latitude, longitude); //add the players latitude and longitude
-    //p.set_id(patientId++);
     auto patientSpec = web::json::value::object();
     utility::string_t ailments = utility::conversions::to_string_t("ailments");
     std::set<condition> addedAilments;
     if (ailmentVector.empty())
     {
-      ui->requestResponse->clear();
+      ui->requestResponse->clear(); //if no ailment was selected
       ui->requestResponse->setText("Please select an ailment");
       return;
     }
@@ -70,7 +71,7 @@ void DoctorWindow::on_requestBed_pressed()
     untreated_patients->push_back(p);
     ui->requestResponse->setText("Your bed has been requested!");
     patient_ids->push_back(p.get_id());
-    clear_checkboxes();
+    clear_checkboxes(); //this unchecks each of the ailment checkboxes
 }
 
 void DoctorWindow::clear_checkboxes(void)
@@ -224,11 +225,14 @@ void DoctorWindow::getStatus()
    }
    try
    {
-    auto r = doctorClient->sendRequest("POST", j_patient_status);
-    for (int i = 0; i < 100000; ++i); //Kill me now
-    web::json::value test = r;
+    web::json::value returnedStatus;
+    //thread to wrap status reqeust
+    std::thread t1(&DoctorWindow::makeRequest, this, std::ref(returnedStatus), std::ref(j_patient_status));
+    t1.join();
+    web::json::value test = returnedStatus;
     auto arr = test.as_array();
     std::vector<Patient> temp;
+    //strings to print into information message box
     std::string denied_ids = "Denied IDs: \n";
     std::string accepted_ids = "Accepted IDs: \n";
     for (auto &a : arr)
@@ -262,7 +266,7 @@ void DoctorWindow::getStatus()
       }
       if (treated != -1)
       {
-        untreated_patients->erase(untreated_patients->begin() + treated);
+        untreated_patients->erase(untreated_patients->begin() + treated); //delete patients upon treatment
       }
     }
     std::string output = denied_ids + accepted_ids;
@@ -273,4 +277,9 @@ void DoctorWindow::getStatus()
    {
      QMessageBox::information(this,tr("Error"), tr(e.what()));
    }
+}
+
+void DoctorWindow::makeRequest(web::json::value &reply, web::json::value &status)
+{
+  reply = doctorClient->sendRequest("POST", status); //get patient status 
 }

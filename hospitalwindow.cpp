@@ -44,7 +44,7 @@ HospitalWindow::~HospitalWindow()
 
 void HospitalWindow::generateBedData(const Hospital h)
 {
-    //Note that this code uses HW1 as a reference
+    //Note that this code uses HW1 as a reference (source used)
     //Code that will be used to create a QChart
     QChart *chart = new  QChart(); //create chart
     QBarSeries *series = new QBarSeries(); //create series
@@ -56,55 +56,48 @@ void HospitalWindow::generateBedData(const Hospital h)
     std::vector<int> numForSpecial = {0,0,0,0,0,0,0,0};
     //Num for special indeces: injury: 0, burn: 1, radiation: 2,
     //                        psychiatric: 3, respiratory: 4, cardiac: 5, scan: 6
-    qDebug() << "The size of the hospital";
-    qDebug() << h.get_size();
-    qDebug() << "Is this correct?";
     for (auto i = 0; i < h.get_size();++i)
     {
       std::string special = h.get_bed(i).get_special(); //get the special for each bed
-      qDebug() << "The special is: ";
-      qDebug() << QString::fromLocal8Bit(special.c_str());
-      qDebug() << special.length();
-      qDebug() << "Is this ok?";
-      if (special.length() > 3 && special.length() < 100)
+      if (special.length() > minSpecialLength && special.length() < maxSpecialLength)  //checks to make sure special length is valid
       {
         if (special.find("injur") != std::string::npos)
         {
-          numForSpecial[0]++; //increase the bed count in this column
+          numForSpecial[0]++;
         }
-        if (special.find("burn") != std::string::npos) //bed can have multiple specials
+        if (special.find("burn") != std::string::npos)
         {
-          numForSpecial[1]++; //increase the bed count in this column
+          numForSpecial[1]++;
         }
         if (special.find("virus") != std::string::npos)
         {
+          numForSpecial[2]++;
+        }
+        if (special.find("radiat") != std::string::npos)
+        {
           numForSpecial[3]++;
         }
-        if (special.find("radiat") != std::string::npos) //bed can have multiple specials
+        if (special.find("psych") != std::string::npos)
         {
-          numForSpecial[2]++; //increase the bed count in this column
+          numForSpecial[4]++;
         }
-        if (special.find("psych") != std::string::npos) //bed can have multiple specials
+        if (special.find("respirat") != std::string::npos)
         {
-          numForSpecial[4]++; //increase the bed count in this column
+          numForSpecial[5]++;
         }
-        if (special.find("respirat") != std::string::npos) //bed can have multiple specials
+        if (special.find("cardi") != std::string::npos)
         {
-          numForSpecial[5]++; //increase the bed count in this column
+          numForSpecial[6]++;
         }
-        if (special.find("cardi") != std::string::npos) //bed can have multiple specials
+        if (special.find("scan") != std::string::npos)
         {
-          numForSpecial[6]++; //increase the bed count in this column
-        }
-        if (special.find("scan") != std::string::npos) //bed can have multiple specials
-        {
-          numForSpecial[7]++; //increase the bed count in this column
+          numForSpecial[7]++;
         }
       }
     }
     for (auto i = 0; i < numForSpecial.size(); ++i)
     {
-        set->append(numForSpecial[i]);
+        set->append(numForSpecial[i]); //append for plotting purposes
     }
     series->append(set); //append the set to a series
     chart->addSeries(series); //add series to chart
@@ -112,7 +105,7 @@ void HospitalWindow::generateBedData(const Hospital h)
     chart->setTitle("Hospital Bed Data");
 
     QBarCategoryAxis *xAxis = new QBarCategoryAxis(); //create x axis
-    QStringList specialsList = (QStringList() << "injury" << "burn" << "radiation" << "virus"
+    QStringList specialsList = (QStringList() << "injury" << "burn" << "virus" << "radiation"
                                 << "psychiatric" << "respiratory" << "cardiac" << "scan");
     xAxis->append(specialsList); //append the special list containing each bed to the hospital
     xAxis->setLabelsAngle(270);
@@ -144,7 +137,7 @@ void HospitalWindow::getStatus()
   catch(std::exception& e) //If unable to connect to server
   {
       std::cout << e.what() << std::endl;
-      QMessageBox::information(this,tr("Error"), tr("Please start the server."));
+      QMessageBox::information(this,tr("Error"), tr("Sorry the connection seems to be disrupted."));
   }
 
 }
@@ -238,8 +231,15 @@ void HospitalWindow::on_addHospital_pressed()
       hospitals_in_use->push_back(h); //add the hospital so it can be polled for data
     }
   generateBedData(h); //generates the bed data plot for the given hospital
-  uncheck();
+  uncheck(); //uncheck each of the check boxes after the bed data has been generated
 }
+
+/*
+* Note that the source used for the latitude and longitude coordinates
+* https://www.latlong.net/convert-address-to-lat-long.html
+* this was used to find the latitude and longitude for the provided hospitals
+* given their address which was taken from their individual websites.
+*/
 
 void HospitalWindow::on_Christiansburg_pressed()
 {
@@ -283,16 +283,18 @@ void HospitalWindow::on_deleteHospitalButton_pressed()
       if (h.get_name() == hospitals_in_use->at(i).get_name())
       {
         index_to_erase = i;
-        hospital_exists = true;
+        hospital_exists = true; //hospital to delete exists 
         break;
       }
     }
-    if (hospital_exists)
+    if (hospital_exists) //if hospital is found
     {
+      QChart *chart = new  QChart();
+      ui->graphicsView->setChart(chart); //clear the graphics view
       hospitalClient->sendRequest("DELETE", h.jsonify()); //send the delete request for the hospital
       if (index_to_erase != -1)
       {
-        hospitals_in_use->erase(hospitals_in_use->begin()+index_to_erase);
+        hospitals_in_use->erase(hospitals_in_use->begin()+index_to_erase); //choose the hospital to delete from user control
       }
     }
     else

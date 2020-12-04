@@ -11,6 +11,8 @@ namespace Ui { class HospitalWindow; }
 QT_END_NAMESPACE
 
 const int handleLength = 7;
+const int minSpecialLength = 3;
+const int maxSpecialLength = 100;
 
 /*!
  * \brief Displays data relevant to hospitals
