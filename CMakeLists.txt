@@ -25,27 +25,48 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #endif()
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(cpprestsdk REQUIRED)
+find_package(SQLite3 REQUIRED)
+find_package(Qt5 COMPONENTS Charts REQUIRED)
 
-if(ANDROID)
-  add_library(hospitalBeds SHARED
-    main.cpp
-    hospitalwindow.cpp
-    hospitalwindow.h
-    hospitalwindow.ui
-    doctorwindow.cpp
-    doctorwindow.h
-    doctorwindow.ui
-  )
-else()
+#if(ANDROID)
+#  add_library(hospitalBeds SHARED
+#    main.cpp
+#    hospitalwindow.cpp
+#    hospitalwindow.h
+#    hospitalwindow.ui
+#    doctorwindow.cpp
+#    doctorwindow.h
+#    doctorwindow.ui
+#    server.cpp
+#    server.h
+#  )
+#else()
   add_executable(hospitalBeds
     main.cpp
-    hospitalwindow.cpp
-    hospitalwindow.h
-    hospitalwindow.ui
-    doctorwindow.cpp
-    doctorwindow.h
-    doctorwindow.ui
+    hospitalwindow.cpp hospitalwindow.h hospitalwindow.ui
+    doctorwindow.cpp   doctorwindow.h   doctorwindow.ui
+    server.cpp         server.h
+    client.cpp         client.h
+    db_connection.cpp  db_connection.h
+    bed.cpp            bed.h
+    hospital.cpp       hospital.h
+    sqlite3.c          sqlite3.h
+    patient.cpp        json_def.h
+                       query.h
+                       patient.h
+                       conditions.h
   )
-endif()
+#endif()
 
-target_link_libraries(hospitalBeds PRIVATE Qt5::Widgets)
+target_link_libraries(hospitalBeds PRIVATE
+    ssl
+    crypto
+    Qt5::Widgets
+    Qt5::Charts
+    boost_system
+    cpprestsdk::cpprest
+    curses
+    sqlite3
+    uuid
+  )
