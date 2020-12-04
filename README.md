@@ -41,7 +41,14 @@ hospitalBeds is an executable with 3 different operating modes. These modes are 
     - Installation:
       - `sudo apt-get install uuid-dev`
     
-# Other Details
+# Other Installation Details
   
   Project built using CMake, and programming languages used are C++ and C. REST service is used for communication and 
   SQLite is used for database.
+
+# Running
+  1. Start hospitalBeds -s
+  2. Start hospitalBeds -h
+  3. Add hospital and beds from the Hospital UI
+  4. Wait for changes to fully propagate. This should take 10-20 seconds, this waiting period is only required when first adding a hospital.
+  5. Start hospitalBeds -d. The application is now fully functional.
