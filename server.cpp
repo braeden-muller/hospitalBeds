@@ -148,8 +148,8 @@ void handle_post(const http_request& request) {
         cout << "    Received: " << body.serialize() << endl; // Serialize just converts to a UTF-8 string
 
         if (body.has_field("patient")) {
-            auto thing = body["patient"];
-            Patient patient(thing);
+            auto j_patient_body = body["patient"];
+            Patient patient(j_patient_body);
             patients.insert({patient.get_id(), patient});
             routePatient(patient);
             request.reply(status_codes::OK,patient.jsonify());
