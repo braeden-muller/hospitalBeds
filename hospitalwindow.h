@@ -66,8 +66,6 @@ private slots:
     void on_virusCheckbox_stateChanged(int arg1);
     /// Radiation checkbox callback
     void on_radiationCheckBox_stateChanged(int arg1);
-    /// Psychiatric checkbox callback
-    void on_psychiatricCheckbox_stateChanged(int arg1);
     /// Respiratory checkbox callback
     void on_respiratoryCheckbox_stateChanged(int arg1);
     /// Cardiac checkbox callback

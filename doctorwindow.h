@@ -42,9 +42,9 @@ public:
 private slots:
 
     /*!
-    *   Serves as the callback function for when the doctor requests a bed. It creates a new bed and
-    *   then sees if the hospital it desires is registered or not. If the hospital is registered it assigns the bed
-    *   to the hospital, if not it registers a new hospital within the database.
+    *   Serves as the callback function for when the doctor requests a bed. It updates the patient and 
+    *   sends the patient to the server via a POST request. The user can select from the set of aiments
+    *   and then request a bed for the patient via the REQUEST BED button. 
     */
     void on_requestBed_pressed();
     // Callback function to update ailment on change of the checkbox

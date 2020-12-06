@@ -25,17 +25,8 @@ pplx::task<http_response> make_task_request(http_client & client,
                                             const method& mtd,
                                             json::value const & jvalue)
 {
-   auto path = utility::conversions::to_string_t("/hospital");
+   auto path = utility::conversions::to_string_t("/hospital"); //port for localhost/hospital
    return (mtd == methods::GET) ? client.request(mtd,path) : client.request(mtd,path,jvalue);
-}
-
-/*!
- * \brief Used to return the value that was sent back as a repsonse
- * \from the server
- */
-void return_response(json::value const & jvalue)
-{
-   std::cout << jvalue.serialize() << std::endl;
 }
 
 /*!
@@ -52,7 +43,6 @@ void make_request(http_client & client, const method& mtd, json::value const & j
         if (response.status_code() == status_codes::OK){
           body = response.extract_json().get();
           std::cout << "Response : " << body.serialize() << '\n';
-          //global_return = body;
         }
       })
       .wait();
@@ -72,7 +62,7 @@ web::json::value Client::sendRequest(const std::string& command, const web::json
    }
    else if (command == "DELETE")
    {
-      make_request(*client, methods::DEL, hospital); 
+      make_request(*client, methods::DEL, hospital); //delete value 
    }
    return body;
 }

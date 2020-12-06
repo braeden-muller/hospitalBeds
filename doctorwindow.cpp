@@ -10,7 +10,7 @@ DoctorWindow::DoctorWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Do
     //7 Special Symptoms for the Doctor to Choose From
     //Right now there are 5 hospital locations for our clients in SWVA
     //Go ahead and set the placeholder text in the latitude and longitude text boxes
-    ui->latitudeLineEdit->setPlaceholderText("37.18");
+    ui->latitudeLineEdit->setPlaceholderText("37.18"); //initialize inside SWVA region
     ui->longitudeLineEdit->setPlaceholderText("-80.53");
     longitude = -80.53;
     latitude = 37.18;
@@ -183,6 +183,7 @@ void DoctorWindow::on_latitudeLineEdit_textChanged(const QString &arg1)
     latitude = arg1.toDouble();
 
     //Force latitude to be in the specified area
+    //this desired area was calculated using www.latlong.net
     if (latitude > 38.0)
     {
       latitude = 38;
@@ -201,6 +202,7 @@ void DoctorWindow::on_longitudeLineEdit_textChanged(const QString &arg1)
     longitude = arg1.toDouble();
 
     //Force the longitude to be in the desired in the area
+    //this desired area was calculated using www.latlong.net
     if (longitude < -83.0)
     {
       longitude = -83.0;
@@ -256,7 +258,7 @@ void DoctorWindow::getStatus()
           {
             denied_ids += a.get_id() + '\n';
           }
-          //If accpeted push into accppted ids vector
+          //If accepted push into accppted ids vector
           else
           {
             accepted_ids += a.get_id() + '\n';

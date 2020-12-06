@@ -18,7 +18,7 @@ HospitalWindow::HospitalWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui
     timer->start(30000); //time specified in ms, so poll every 1 minute
 
     //fill the array for special indeces
-    for (auto i = 0; i < 8; ++i)
+    for (auto i = 0; i < 7; ++i)
         specialIndeces.push_back(false);
 }
 
@@ -53,9 +53,8 @@ void HospitalWindow::generateBedData(const Hospital h)
     qFont->setPointSize(4); //arbitrary font size
     set->setLabelFont(*qFont);
     //reinitialize vector each time you get the specials
-    std::vector<int> numForSpecial = {0,0,0,0,0,0,0,0};
-    //Num for special indeces: injury: 0, burn: 1, radiation: 2,
-    //                        psychiatric: 3, respiratory: 4, cardiac: 5, scan: 6
+    std::vector<int> numForSpecial = {0,0,0,0,0,0,0};
+
     for (auto i = 0; i < h.get_size();++i)
     {
       std::string special = h.get_bed(i).get_special(); //get the special for each bed
@@ -77,21 +76,17 @@ void HospitalWindow::generateBedData(const Hospital h)
         {
           numForSpecial[3]++;
         }
-        if (special.find("psych") != std::string::npos)
+        if (special.find("respirat") != std::string::npos)
         {
           numForSpecial[4]++;
         }
-        if (special.find("respirat") != std::string::npos)
+        if (special.find("cardi") != std::string::npos)
         {
           numForSpecial[5]++;
         }
-        if (special.find("cardi") != std::string::npos)
-        {
-          numForSpecial[6]++;
-        }
         if (special.find("scan") != std::string::npos)
         {
-          numForSpecial[7]++;
+          numForSpecial[6]++;
         }
       }
     }
@@ -106,7 +101,7 @@ void HospitalWindow::generateBedData(const Hospital h)
 
     QBarCategoryAxis *xAxis = new QBarCategoryAxis(); //create x axis
     QStringList specialsList = (QStringList() << "injury" << "burn" << "virus" << "radiation"
-                                << "psychiatric" << "respiratory" << "cardiac" << "scan");
+                                              << "respiratory" << "cardiac" << "scan");
     xAxis->append(specialsList); //append the special list containing each bed to the hospital
     xAxis->setLabelsAngle(270);
     chart->addAxis(xAxis, Qt::AlignBottom); //add axis to chart
@@ -151,8 +146,8 @@ void HospitalWindow::on_addHospital_pressed()
     //Create all bed specifications for the hospital
     utility::string_t specialVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
                                             utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
-                                            utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
-                                            utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
+                                            utility::conversions::to_string_t("respiratory"), utility::conversions::to_string_t("cardiac"),
+                                            utility::conversions::to_string_t("scan")};
     for (int i = 0; i < 8; ++i)
     {
       auto bedSpec = web::json::value::object(); //Initialize all pertinent json objects before making request.
@@ -170,7 +165,7 @@ void HospitalWindow::on_addHospital_pressed()
       std::set<condition> addedSpecials;
       utility::string_t handleVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
                                               utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
-                                              utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
+                                               utility::conversions::to_string_t("respiratory"),
                                               utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
 
       //add in all necessary handles
@@ -283,7 +278,7 @@ void HospitalWindow::on_deleteHospitalButton_pressed()
       if (h.get_name() == hospitals_in_use->at(i).get_name())
       {
         index_to_erase = i;
-        hospital_exists = true; //hospital to delete exists 
+        hospital_exists = true; //hospital to delete exists
         break;
       }
     }
@@ -336,7 +331,7 @@ void HospitalWindow::on_addBedsButton_pressed()
       //Create all bed specifications for the hospital
       utility::string_t specialVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
                                               utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
-                                              utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
+                                              utility::conversions::to_string_t("respiratory"),
                                               utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
       for (auto i = 0; i < beds2Add; ++i)
       {
@@ -355,7 +350,7 @@ void HospitalWindow::on_addBedsButton_pressed()
           std::set<condition> addedSpecials;
           utility::string_t handleVector[] = {utility::conversions::to_string_t("injury"), utility::conversions::to_string_t("burn"),
                                                   utility::conversions::to_string_t("virus"), utility::conversions::to_string_t("radiation"),
-                                                  utility::conversions::to_string_t("psychiatric"), utility::conversions::to_string_t("respiratory"),
+                                                   utility::conversions::to_string_t("respiratory"),
                                                   utility::conversions::to_string_t("cardiac"), utility::conversions::to_string_t("scan")};
           for (auto s = 0; s < handleLength; ++s)
           {
@@ -421,24 +416,19 @@ void HospitalWindow::on_radiationCheckBox_stateChanged(int arg1)
     specialIndeces[3] = (arg1 == Qt::Checked) ? true : false;
 }
 
-void HospitalWindow::on_psychiatricCheckbox_stateChanged(int arg1)
+void HospitalWindow::on_respiratoryCheckbox_stateChanged(int arg1)
 {
     specialIndeces[4] = (arg1 == Qt::Checked) ? true : false;
 }
 
-void HospitalWindow::on_respiratoryCheckbox_stateChanged(int arg1)
+void HospitalWindow::on_cardiacCheckbox_stateChanged(int arg1)
 {
     specialIndeces[5] = (arg1 == Qt::Checked) ? true : false;
 }
 
-void HospitalWindow::on_cardiacCheckbox_stateChanged(int arg1)
-{
-    specialIndeces[6] = (arg1 == Qt::Checked) ? true : false;
-}
-
 void HospitalWindow::on_scanCheckbox_stateChanged(int arg1)
 {
-    specialIndeces[7] = (arg1 == Qt::Checked) ? true : false;
+    specialIndeces[6] = (arg1 == Qt::Checked) ? true : false;
 }
 
 void HospitalWindow::uncheck()
@@ -451,7 +441,6 @@ void HospitalWindow::uncheck()
   ui->burnCheckbox->setChecked(Qt::Unchecked);
   ui->virusCheckbox->setChecked(Qt::Unchecked);
   ui->respiratoryCheckbox->setChecked(Qt::Unchecked);
-  ui->psychiatricCheckbox->setChecked(Qt::Unchecked);
   for (auto i = 0; i < specialIndeces.size();++i)
     specialIndeces[i] = false; //set back to false
 }

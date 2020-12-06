@@ -174,13 +174,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="psychiatricCheckbox">
-       <property name="text">
-        <string>psychiatric</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QCheckBox" name="respiratoryCheckbox">
        <property name="text">
         <string>respiratory</string>
